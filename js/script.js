@@ -2,7 +2,7 @@
   var root = document.documentElement; root.classList.add('js');
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var euro = function (n) { return '€' + Math.round(n).toLocaleString('en-US'); };
-  var euroNeg = function (n) { return '−€' + Math.round(n).toLocaleString('en-US'); };
+  var euroNeg = function (n) { return Math.round(n) === 0 ? '€0' : '−€' + Math.round(n).toLocaleString('en-US'); };
 
   function countUp(el) {
     var raw = el.getAttribute('data-count') || el.textContent;
