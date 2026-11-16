@@ -7,7 +7,7 @@
   var L = g.DomiaLib, esc = L.esc, tx = L.tx, icon = L.icon, fill = L.fill, money = L.money;
 
   // Bump when css/site.css or js/site.js change, so browsers fetch the new files.
-  var ASSET_VERSION = '20261116c';
+  var ASSET_VERSION = '20261116d';
 
   // Site photography in assets/img (name: [width, height] of the large file).
   var IMG = {
@@ -18,6 +18,8 @@
   };
   var CHANNELS = [['Airbnb', 3], ['Booking.com', 15], ['direct', 0], ['VRBO', 8]];
 
+  /* "Domia Stays Group S.L." already ends with a full stop: never print two */
+  function sentence(x) { x = String(x || '').trim(); return /[.!?]$/.test(x) ? x : x + '.'; }
   function siteImg(name, alt, sizes, opts) {
     opts = opts || {};
     var d = IMG[name], sw = Math.min(900, d[0]);
@@ -109,7 +111,7 @@
     var t = ctx.t, site = ctx.site, s = '';
     function a(key, label) { return '<li><a href="' + ctx.href(key) + '">' + esc(label) + '</a></li>'; }
     s += '<footer class="ftr">\n<div class="wrap">\n<div class="ftr__top">\n';
-    s += '<div class="ftr__brand"><a href="' + ctx.href('index') + '"><img src="assets/brand/logo-gold.svg" alt="' + esc(site.legalName + '. ' + site.tagline) + '" width="208" height="143" loading="lazy"></a><p>' + esc(t.footer.blurb) + '</p></div>\n';
+    s += '<div class="ftr__brand"><a href="' + ctx.href('index') + '"><img src="assets/brand/logo-gold.svg" alt="' + esc(sentence(site.legalName) + ' ' + site.tagline) + '" width="208" height="143" loading="lazy"></a><p>' + esc(t.footer.blurb) + '</p></div>\n';
     s += '<div class="ftr__col"><h2>' + esc(t.footer.stay) + '</h2><ul>' + a('properties', t.nav.homes) + a('benidorm', t.nav.benidorm) + a('guest-info', t.nav.guest) + '</ul></div>\n';
     s += '<div class="ftr__col"><h2>' + esc(t.footer.owners) + '</h2><ul>' + a('owners', t.footer.management) + a('owner-calculator', t.nav.calc) + '</ul></div>\n';
     s += '<div class="ftr__col"><h2>' + esc(t.footer.company) + '</h2><ul>' + a('about', t.nav.about) + a('contact', t.nav.contact) + '</ul></div>\n';
@@ -121,7 +123,7 @@
       if (site[x[0]]) s += '<li><a href="' + esc(site[x[0]]) + '" target="_blank" rel="noopener">' + icon('external') + x[1] + '</a></li>';
     });
     s += '</ul></div>\n</div>\n';
-    s += '<div class="ftr__bar"><span>© ' + ctx.year + ' ' + esc(site.legalName) + '. ' + esc(t.footer.rights) + '.</span><span class="ftr__tag">' + esc(site.tagline) + '</span></div>\n';
+    s += '<div class="ftr__bar"><span>© ' + ctx.year + ' ' + esc(sentence(site.legalName)) + ' ' + esc(t.footer.rights) + '.</span><span class="ftr__tag">' + esc(site.tagline) + '</span></div>\n';
     s += '</div>\n</footer>\n';
     return s;
   }
@@ -177,7 +179,7 @@
 
   function pageHead(ctx, o) {
     var s = '<section class="phead' + (o.navy ? ' navy' : '') + '">\n<div class="wrap">\n';
-    if (o.crumb) s += '<nav class="crumbs" aria-label="Breadcrumb"><a href="' + o.crumb.href + '">' + esc(o.crumb.label) + '</a><span aria-hidden="true">/</span><span>' + esc(o.crumbHere) + '</span></nav>\n';
+    if (o.crumb) s += '<nav class="crumbs" aria-label="' + (ctx.lang === 'es' ? 'Ruta de navegación' : 'Breadcrumb') + '"><a href="' + o.crumb.href + '">' + esc(o.crumb.label) + '</a><span aria-hidden="true">/</span><span>' + esc(o.crumbHere) + '</span></nav>\n';
     s += '<h1 class="h1">' + esc(o.h1) + '</h1>\n' + (o.lead ? '<p class="lead phead__lead">' + esc(o.lead) + '</p>\n' : '') + (o.extra || '') + '</div>\n</section>\n';
     return s;
   }
@@ -252,8 +254,8 @@
       var seal = '<div class="seal" aria-hidden="true"><svg viewBox="0 0 120 120"><path id="seal-arc" fill="none" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0"/><text><textPath href="#seal-arc" textLength="286" lengthAdjust="spacing">' + esc(sealText) + '</textPath></text></svg><img src="assets/brand/monogram-gold.svg" width="46" height="42" alt=""></div>\n';
       s += '<section class="hero navy">\n<div class="wrap hero__in">\n';
       s += '<div class="hero__copy">\n<p class="eyebrow">' + esc(c.eyebrow) + '</p>\n<h1 class="hl">' + headline + '</h1>\n<p class="lead">' + esc(c.lead) + '</p>\n' + buttons + '</div>\n';
-      s += '<div class="hero__stage" data-tilt>\n<span class="hero__ring" aria-hidden="true"></span>\n<div class="hero__window">\n<img src="assets/video/benidorm-bay-poster.jpg" srcset="assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w" sizes="(min-width: 900px) 48vw, 100vw" width="1200" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high">\n';
-      s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-bay.mp4" data-src-sm="assets/video/benidorm-bay-sm.mp4"></video>\n</div>\n' + seal + '</div>\n</div>\n' + marquee + '</section>\n';
+      s += '<div class="hero__stage" data-tilt>\n<span class="hero__ring" aria-hidden="true"></span>\n<div class="hero__window">\n<div class="hero__media">\n<img src="assets/video/benidorm-bay-poster.jpg" srcset="assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w" sizes="(min-width: 900px) 48vw, 100vw" width="1200" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high">\n';
+      s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-bay.mp4" data-src-sm="assets/video/benidorm-bay-sm.mp4"></video>\n</div>\n</div>\n' + seal + '</div>\n</div>\n' + marquee + '</section>\n';
       preloads = [{ src: 'assets/video/benidorm-bay-poster.jpg', srcset: 'assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w', sizes: '(min-width: 900px) 48vw, 100vw' }];
     }
 
@@ -314,7 +316,7 @@
     var waText = fill(t.wa.home, { name: home.name, area: home.area });
 
     s += '<section class="hhead">\n<div class="wrap">\n';
-    s += '<nav class="crumbs" aria-label="Breadcrumb"><a href="' + ctx.href('properties') + '">' + esc(p.crumb) + '</a><span aria-hidden="true">/</span><span>' + esc(home.name) + '</span></nav>\n';
+    s += '<nav class="crumbs" aria-label="' + (ctx.lang === 'es' ? 'Ruta de navegación' : 'Breadcrumb') + '"><a href="' + ctx.href('properties') + '">' + esc(p.crumb) + '</a><span aria-hidden="true">/</span><span>' + esc(home.name) + '</span></nav>\n';
     s += '<div class="hhead__row"><div><h1 class="h1">' + esc(home.name) + '</h1><p class="hhead__where">' + icon('pin') + esc(where) + (tag ? '<span class="pill">' + esc(tag) + '</span>' : '') + '</p></div></div>\n';
     if (n) {
       s += '<div class="gal gal--' + shown + '" data-gallery aria-label="' + esc(fill(p.photos, { name: home.name })) + '">\n<div class="gal__track" data-gal-track>\n';
@@ -465,7 +467,7 @@
     function neg(n) { return Math.round(n) === 0 ? '€0' : '−' + money(n); }
 
     s += '<section class="calc navy">\n<div class="wrap">\n';
-    s += '<nav class="crumbs" aria-label="Breadcrumb"><a href="' + ctx.href('owners') + '">' + esc(c.crumb) + '</a><span aria-hidden="true">/</span><span>' + esc(c.h1) + '</span></nav>\n';
+    s += '<nav class="crumbs" aria-label="' + (ctx.lang === 'es' ? 'Ruta de navegación' : 'Breadcrumb') + '"><a href="' + ctx.href('owners') + '">' + esc(c.crumb) + '</a><span aria-hidden="true">/</span><span>' + esc(c.h1) + '</span></nav>\n';
     s += '<h1 class="h1">' + esc(c.h1) + '</h1>\n<p class="lead phead__lead">' + esc(c.lead) + '</p>\n';
     s += '<div class="calc__grid" data-calc data-fee-label="' + esc(c.flowFee) + '">\n';
 

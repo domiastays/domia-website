@@ -243,11 +243,36 @@ ok('owners: states 20% of net revenue', (await D.textContent('.dfig')).includes(
 ok('owners: twelve services, six compliance items, five onboarding steps', (await D.locator('.svc dt').count()) === 12 && (await D.locator('.chips li').count()) === 6 && (await D.locator('.steps li').count()) === 5);
 await Promise.all([D.waitForNavigation(), D.click('.ohero a[href="owner-calculator.html"]')]);
 ok('owners: the calculator button opens the calculator', fileOf(D) === 'owner-calculator.html');
+// --- Spanish pages are fully in Spanish (brand, tagline, place names and international terms aside)
+{
+  const lines = async f => { await D.goto(BASE + f, { waitUntil: 'load' }); return D.evaluate(() => { document.querySelectorAll('details').forEach(d => d.open = true); const a = document.body.innerText.split('\n'); document.querySelectorAll('[alt],[aria-label],[placeholder],[title]').forEach(e => ['alt', 'aria-label', 'placeholder', 'title'].forEach(k => e.getAttribute(k) && a.push(e.getAttribute(k)))); document.querySelectorAll('option').forEach(o => a.push(o.textContent)); a.push(document.title, (document.querySelector('meta[name=description]') || {}).content || ''); return [...new Set(a.map(x => x.trim()).filter(Boolean))]; }); };
+  const english = /\b(the|and|of|to|with|your|our|for|from|home|homes|at|breadcrumb|menu|close|open|search|send|name|phone|message|guests|bedrooms|area|about|contact|owners|language|skip|next|previous|photo|photos|book|read|more|show|all|any)\b/i;
+  const left = [];
+  for (const f of pages.filter(f => f !== '404.html' && !f.endsWith('.es.html'))) {
+    const en = await lines(f), es = new Set(await lines(f.replace('.html', '.es.html')));
+    for (const l of en) if (es.has(l) && english.test(l.split(site.tagline).join('')) && !data.some(h => h.name === l)) left.push(f.replace('.html', '.es.html') + ': "' + l.slice(0, 60) + '"');
+  }
+  ok('Spanish pages: no text left in English', left.length === 0, left.slice(0, 5).join('; '));
+}
+
+// --- every D shape keeps the proportions of a real D, on a computer and on a phone
+for (const [name, vp] of [['computer', { width: 1440, height: 820 }], ['small laptop', { width: 1280, height: 640 }], ['tablet', { width: 820, height: 1100 }], ['phone', { width: 390, height: 780 }]]) {
+  const P = await newPage({ viewport: vp });
+  const off = [];
+  for (const f of ['index.html', 'owners.html', 'about.html']) {
+    await P.goto(BASE + f, { waitUntil: 'load' });
+    off.push(...await P.evaluate(f => [...document.querySelectorAll('.hero__window, .intro__media, .dfig, .story__media')].map(e => { const b = e.getBoundingClientRect(), c = getComputedStyle(e), r = b.width / b.height; const fits = [...e.children].every(k => { const kb = k.getBoundingClientRect(); return e.matches('.dfig') ? kb.right <= b.right && kb.bottom <= b.bottom && kb.top >= b.top : true; }); return r >= .9 && r <= 1.12 && parseFloat(c.borderTopRightRadius) >= b.height / 2 && parseFloat(c.borderBottomRightRadius) >= b.height / 2 && parseFloat(c.borderTopLeftRadius) === 0 && b.right <= innerWidth && fits ? null : f + ' ' + e.className + ' ' + Math.round(b.width) + 'x' + Math.round(b.height); }).filter(Boolean), f));
+  }
+  ok(`D shapes on a ${name}: about as wide as tall, a true half circle, nothing spilling out`, off.length === 0, off.join('; '));
+  await P.close();
+}
+
 // --- movement
 await D.goto(BASE + 'index.html', { waitUntil: 'load' }); await D.waitForTimeout(2600);
 ok('movement: the headline and buttons finish their entrance', await D.evaluate(() => [...document.querySelectorAll('.cine__in > *, .hero__copy > *')].every(e => getComputedStyle(e).opacity === '1')));
 ok('movement: the gold words shine and the line around the window is drawn', await D.evaluate(() => { const names = e => getComputedStyle(e).animationName; const shim = [...document.querySelectorAll('h1 .shim')]; const ring = document.querySelector('.hero__ring'), sealSvg = document.querySelector('.seal svg'); return shim.length === 2 && shim.every(e => names(e).includes('shine') && getComputedStyle(e).color === 'rgba(0, 0, 0, 0)') && names(document.querySelector('.spark')).includes('twinkle') && (!ring || (names(ring).includes('ring-draw') && names(sealSvg).includes('spin'))); }));
 ok('movement: the video window follows the pointer a little', await (async () => { const st = D.locator('[data-tilt]'); if (!(await st.count())) return true; await D.mouse.move(1300, 200); await D.waitForTimeout(250); const a = await st.evaluate(e => e.style.getPropertyValue('--px')); await D.mouse.move(120, 600); await D.waitForTimeout(250); const b = await st.evaluate(e => e.style.getPropertyValue('--px')); return parseFloat(a) > 0.5 && parseFloat(b) < -0.5; })());
+ok('movement: the frame of the video window stays still while the picture shifts behind it (no stray lines)', await (async () => { const st = D.locator('.hero__window'); if (!(await st.count())) return true; const read = () => D.evaluate(() => { const w = document.querySelector('.hero__window'), m = document.querySelector('.hero__media'), v = m.querySelector('video').getBoundingClientRect(), b = w.getBoundingClientRect(); return { box: [b.left, b.top, b.right, b.bottom].join(), wt: getComputedStyle(w).transform, clip: getComputedStyle(w).clipPath + getComputedStyle(m).clipPath, covers: v.left <= b.left && v.top <= b.top && v.right >= b.right && v.bottom >= b.bottom, mt: getComputedStyle(m).transform }; }); await D.mouse.move(700, 400); await D.waitForTimeout(1300); const a = await read(); let good = a.wt === 'none' && a.clip === 'nonenone' && a.covers; for (const [x, y] of [[1430, 90], [1430, 700], [760, 700]]) { await D.mouse.move(x, y, { steps: 4 }); await D.waitForTimeout(1300); const b = await read(); good = good && b.box === a.box && b.wt === 'none' && b.covers && b.mt !== a.mt; } return good; })());
 ok('movement: content below the screen waits, then eases in when reached', await D.evaluate(async () => { const el = document.querySelector('.owners-teaser .dfig'); const before = el.classList.contains('is-in'); el.scrollIntoView({ block: 'center' }); await new Promise(r => setTimeout(r, 1500)); return !before && el.classList.contains('is-in') && getComputedStyle(el).opacity === '1'; }));
 ok('movement: numbers count up to their real value', await D.evaluate(async () => { await new Promise(r => setTimeout(r, 1800)); return document.querySelector('.owners-teaser [data-countup]').textContent === '20%'; }));
 ok('movement: the progress line follows the scroll', await D.evaluate(async () => { window.scrollTo(0, document.documentElement.scrollHeight); await new Promise(r => setTimeout(r, 400)); return /scaleX\((1|0\.99)/.test(document.querySelector('.progress').style.transform); }));
@@ -279,6 +304,10 @@ await M.evaluate(() => window.scrollTo(0, 1500)); await M.waitForTimeout(500);
 ok('phone: the WhatsApp button appears after scrolling', await M.evaluate(() => document.querySelector('.fab').classList.contains('is-on')));
 const most = [...data].sort((a, b) => b.photos.length - a.photos.length)[0], nPh = most.photos.length;
 await M.goto(BASE + `properties_${most.id}.html`, { waitUntil: 'load' });
+ok('phone: on a home page the menu button is visible against the header', await M.evaluate(() => { const b = document.querySelector('.menu-btn'), r = b.getBoundingClientRect(); const lum = c => { const m = c.match(/[\d.]+/g).map(Number); const f = v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }; return .2126 * f(m[0]) + .7152 * f(m[1]) + .0722 * f(m[2]); }; const fg = lum(getComputedStyle(b).color), bg = lum(getComputedStyle(document.querySelector('.hdr')).backgroundColor); const ratio = (Math.max(fg, bg) + .05) / (Math.min(fg, bg) + .05); return r.width >= 40 && r.height >= 40 && r.right <= innerWidth && r.top >= 0 && getComputedStyle(b).visibility === 'visible' && ratio > 4.5 && document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2).closest('.menu-btn') === b; }));
+await M.click('.menu-btn');
+ok('phone: and it opens the menu there too', await M.locator('#menu').isVisible() && (await M.locator('.menu__nav a').count()) === 6);
+await M.click('.menu-btn');
 ok('phone: a home page shows the price bar at the bottom', await M.locator('[data-bar]').isVisible() && !(await M.evaluate(() => document.querySelector('[data-bar]').classList.contains('is-off'))));
 await M.evaluate(() => { const t = document.querySelector('[data-gal-track]'); t.scrollTo({ left: t.scrollWidth, behavior: 'instant' }); }); await M.waitForTimeout(500);
 ok('phone: the photo counter follows the swipe', nPh < 2 || (await M.textContent('[data-gal-i]')) === String(nPh));
