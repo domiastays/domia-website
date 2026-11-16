@@ -1,0 +1,457 @@
+{
+  "version": 1,
+  "properties": [
+    {
+      "id": "mirador-del-levante",
+      "status": "published",
+      "featured": true,
+      "name": "Mirador del Levante",
+      "type": "apartment",
+      "area": "Playa de Levante",
+      "town": "Benidorm",
+      "priceFrom": 145,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "guests": 4,
+      "size": 78,
+      "minNights": 0,
+      "tag": {
+        "en": "Sea front",
+        "es": "Primera línea"
+      },
+      "summary": {
+        "en": "Front-line views over the golden crescent of Levante.",
+        "es": "Vistas en primera línea sobre la media luna dorada de Levante."
+      },
+      "description": {
+        "en": "A bright, sea-facing apartment on Levante beach, with the bay filling every window and the promenade at your door. Wake to the water, walk to a hundred restaurants, and come home to a calm, elegant space designed for four.",
+        "es": "Un apartamento luminoso frente al mar en la playa de Levante, con la bahía en cada ventana y el paseo a tu puerta. Despierta con el agua, camina hasta cien restaurantes y regresa a un espacio sereno y elegante para cuatro."
+      },
+      "amenities": [
+        "sea-view",
+        "wifi",
+        "pool-shared",
+        "ac",
+        "lift"
+      ],
+      "amenitiesExtra": [],
+      "photos": [
+        {
+          "file": "mirador-del-levante-01.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Glazed terrace with rattan seating and a sea view",
+            "es": "Terraza acristalada con sofás de ratán y vistas al mar"
+          }
+        },
+        {
+          "file": "mirador-del-levante-02.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Living room with dining table and sofa",
+            "es": "Salón con mesa de comedor y sofá"
+          }
+        },
+        {
+          "file": "mirador-del-levante-03.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Double bedroom with fresh linen and towels",
+            "es": "Dormitorio doble con ropa de cama y toallas"
+          }
+        },
+        {
+          "file": "mirador-del-levante-04.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Fitted kitchen",
+            "es": "Cocina equipada"
+          }
+        }
+      ],
+      "licence": "",
+      "bookingUrl": "",
+      "airbnbUrl": "",
+      "bookingComUrl": ""
+    },
+    {
+      "id": "casa-poniente",
+      "status": "published",
+      "featured": true,
+      "name": "Casa Poniente",
+      "type": "apartment",
+      "area": "Playa de Poniente",
+      "town": "Benidorm",
+      "priceFrom": 175,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "guests": 6,
+      "size": 105,
+      "minNights": 0,
+      "tag": {
+        "en": "Terrace",
+        "es": "Terraza"
+      },
+      "summary": {
+        "en": "Sunset-facing living with a wraparound terrace.",
+        "es": "Salón orientado al atardecer con terraza envolvente."
+      },
+      "description": {
+        "en": "Space to breathe on the quieter Poniente side. Three bedrooms, a generous living room and a wraparound terrace made for long dinners as the sun drops behind the bay.",
+        "es": "Espacio para respirar en la tranquila zona de Poniente. Tres dormitorios, un amplio salón y una terraza envolvente hecha para largas cenas mientras el sol cae tras la bahía."
+      },
+      "amenities": [
+        "terrace",
+        "wifi",
+        "pool-shared",
+        "ac",
+        "parking"
+      ],
+      "amenitiesExtra": [],
+      "photos": [
+        {
+          "file": "casa-poniente-01.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Glazed terrace lounge with a corner sofa and open views",
+            "es": "Terraza acristalada con sofá y vistas despejadas"
+          }
+        },
+        {
+          "file": "casa-poniente-02.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Open-plan living room with breakfast bar",
+            "es": "Salón abierto con barra de desayuno"
+          }
+        },
+        {
+          "file": "casa-poniente-03.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Double bedroom",
+            "es": "Dormitorio doble"
+          }
+        },
+        {
+          "file": "casa-poniente-04.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Terrace dining table with a view of the skyline",
+            "es": "Mesa de comedor en la terraza con vistas al skyline"
+          }
+        }
+      ],
+      "licence": "",
+      "bookingUrl": "",
+      "airbnbUrl": "",
+      "bookingComUrl": ""
+    },
+    {
+      "id": "estudio-casco-antiguo",
+      "status": "published",
+      "featured": true,
+      "name": "Estudio Casco Antiguo",
+      "type": "studio",
+      "area": "Casco Antiguo",
+      "town": "Benidorm",
+      "priceFrom": 89,
+      "bedrooms": 0,
+      "bathrooms": 1,
+      "guests": 2,
+      "size": 38,
+      "minNights": 0,
+      "tag": {
+        "en": "Bolthole",
+        "es": "Refugio"
+      },
+      "summary": {
+        "en": "A romantic studio steps from the plaza and tapas.",
+        "es": "Un estudio romántico a pasos de la plaza y las tapas."
+      },
+      "description": {
+        "en": "A charming studio in the heart of the old town, whitewashed lanes, tapas bars and the Balcón del Mediterráneo all on your doorstep. The perfect bolthole for two.",
+        "es": "Un estudio con encanto en el corazón del casco antiguo: calles encaladas, bares de tapas y el Balcón del Mediterráneo a un paso. El refugio perfecto para dos."
+      },
+      "amenities": [
+        "central",
+        "wifi",
+        "ac",
+        "kitchen"
+      ],
+      "amenitiesExtra": [],
+      "photos": [
+        {
+          "file": "estudio-casco-antiguo-01.jpg",
+          "w": 1600,
+          "h": 1200,
+          "alt": {
+            "en": "Living room with corner sofa and balcony",
+            "es": "Salón con sofá rinconero y balcón"
+          }
+        },
+        {
+          "file": "estudio-casco-antiguo-02.jpg",
+          "w": 1600,
+          "h": 1066,
+          "alt": {
+            "en": "Double bedroom",
+            "es": "Dormitorio doble"
+          }
+        },
+        {
+          "file": "estudio-casco-antiguo-03.jpg",
+          "w": 1600,
+          "h": 1200,
+          "alt": {
+            "en": "Wooden fitted kitchen",
+            "es": "Cocina de madera equipada"
+          }
+        }
+      ],
+      "licence": "",
+      "bookingUrl": "",
+      "airbnbUrl": "",
+      "bookingComUrl": ""
+    },
+    {
+      "id": "suite-rincon-de-loix",
+      "status": "published",
+      "featured": true,
+      "name": "Suite Rincón de Loix",
+      "type": "apartment",
+      "area": "Rincón de Loix",
+      "town": "Benidorm",
+      "priceFrom": 130,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "guests": 5,
+      "size": 72,
+      "minNights": 0,
+      "tag": {
+        "en": "Resort pool",
+        "es": "Piscina resort"
+      },
+      "summary": {
+        "en": "Bright rooms, resort pool, minutes to the sand.",
+        "es": "Habitaciones luminosas, piscina resort, a minutos de la arena."
+      },
+      "description": {
+        "en": "Restful and bright, in a resort complex with a large pool and gardens, five minutes on foot to the far, calmer end of Levante beach. Great value for families and groups.",
+        "es": "Tranquilo y luminoso, en un complejo con gran piscina y jardines, a cinco minutos a pie del extremo más sereno de la playa de Levante. Excelente relación calidad-precio para familias y grupos."
+      },
+      "amenities": [
+        "pool-shared",
+        "wifi",
+        "ac",
+        "parking",
+        "beach-5min"
+      ],
+      "amenitiesExtra": [],
+      "photos": [
+        {
+          "file": "suite-rincon-de-loix-01.jpg",
+          "w": 1600,
+          "h": 1200,
+          "alt": {
+            "en": "Living room with sofa and coffee table",
+            "es": "Salón con sofá y mesa de centro"
+          }
+        },
+        {
+          "file": "suite-rincon-de-loix-02.jpg",
+          "w": 1600,
+          "h": 1200,
+          "alt": {
+            "en": "Kitchen and dining table",
+            "es": "Cocina con mesa de comedor"
+          }
+        },
+        {
+          "file": "suite-rincon-de-loix-03.jpg",
+          "w": 1600,
+          "h": 1200,
+          "alt": {
+            "en": "Double bedroom",
+            "es": "Dormitorio doble"
+          }
+        },
+        {
+          "file": "suite-rincon-de-loix-04.jpg",
+          "w": 1600,
+          "h": 1200,
+          "alt": {
+            "en": "Shared pool and gardens",
+            "es": "Piscina comunitaria y jardines"
+          }
+        }
+      ],
+      "licence": "",
+      "bookingUrl": "",
+      "airbnbUrl": "",
+      "bookingComUrl": ""
+    },
+    {
+      "id": "atico-sierra-cortina",
+      "status": "published",
+      "featured": true,
+      "name": "Ático Sierra Cortina",
+      "type": "penthouse",
+      "area": "Sierra Cortina",
+      "town": "Finestrat",
+      "priceFrom": 210,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "guests": 6,
+      "size": 120,
+      "minNights": 0,
+      "tag": {
+        "en": "Penthouse",
+        "es": "Ático"
+      },
+      "summary": {
+        "en": "Golf-side calm with skyline panoramas.",
+        "es": "Calma junto al golf con panorámicas del skyline."
+      },
+      "description": {
+        "en": "A generous penthouse above the town on the Sierra Cortina hillside, golf, quiet and space, with panoramic views across the Benidorm skyline to the sea. For those who want room to spread out.",
+        "es": "Un amplio ático sobre la ciudad en la ladera de Sierra Cortina: golf, tranquilidad y espacio, con vistas panorámicas del skyline de Benidorm hasta el mar. Para quienes buscan amplitud."
+      },
+      "amenities": [
+        "sea-view",
+        "pool-shared",
+        "parking",
+        "ac",
+        "terrace"
+      ],
+      "amenitiesExtra": [],
+      "photos": [
+        {
+          "file": "atico-sierra-cortina-01.jpg",
+          "w": 1085,
+          "h": 1450,
+          "alt": {
+            "en": "Living room with sofa and dining area",
+            "es": "Salón con sofá y zona de comedor"
+          }
+        },
+        {
+          "file": "atico-sierra-cortina-02.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Double bedroom",
+            "es": "Dormitorio doble"
+          }
+        },
+        {
+          "file": "atico-sierra-cortina-03.jpg",
+          "w": 1085,
+          "h": 1450,
+          "alt": {
+            "en": "Kitchen with dining table",
+            "es": "Cocina con mesa de comedor"
+          }
+        },
+        {
+          "file": "atico-sierra-cortina-04.jpg",
+          "w": 1085,
+          "h": 1450,
+          "alt": {
+            "en": "View from the balcony over the pool",
+            "es": "Vista desde el balcón sobre la piscina"
+          }
+        }
+      ],
+      "licence": "",
+      "bookingUrl": "",
+      "airbnbUrl": "",
+      "bookingComUrl": ""
+    },
+    {
+      "id": "balcon-del-mar",
+      "status": "published",
+      "featured": true,
+      "name": "Balcón del Mar",
+      "type": "apartment",
+      "area": "Cala de Finestrat",
+      "town": "Finestrat",
+      "priceFrom": 160,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "guests": 4,
+      "size": 80,
+      "minNights": 0,
+      "tag": {
+        "en": "Quiet cove",
+        "es": "Cala tranquila"
+      },
+      "summary": {
+        "en": "A sheltered cove and a terrace for long dinners.",
+        "es": "Una cala protegida y una terraza para largas cenas."
+      },
+      "description": {
+        "en": "Just around the headland in Cala de Finestrat, a sheltered cove, calmer water and a terrace built for dinners that run well past sunset. Benidorm's energy is a short drive; the calm is yours.",
+        "es": "A la vuelta del cabo, en la Cala de Finestrat: una cala protegida, aguas más tranquilas y una terraza para cenas que se alargan más allá del atardecer. La energía de Benidorm queda a un paso; la calma es tuya."
+      },
+      "amenities": [
+        "sea-view",
+        "terrace",
+        "wifi",
+        "ac",
+        "beach-5min"
+      ],
+      "amenitiesExtra": [],
+      "photos": [
+        {
+          "file": "balcon-del-mar-01.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Living room with sofa, dining table and balcony",
+            "es": "Salón con sofá, mesa de comedor y balcón"
+          }
+        },
+        {
+          "file": "balcon-del-mar-02.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Double bedroom with balcony door",
+            "es": "Dormitorio doble con salida al balcón"
+          }
+        },
+        {
+          "file": "balcon-del-mar-03.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Kitchen and dining area",
+            "es": "Cocina y zona de comedor"
+          }
+        },
+        {
+          "file": "balcon-del-mar-04.jpg",
+          "w": 1086,
+          "h": 1448,
+          "alt": {
+            "en": "Balcony with table and chairs",
+            "es": "Balcón con mesa y sillas"
+          }
+        }
+      ],
+      "licence": "",
+      "bookingUrl": "",
+      "airbnbUrl": "",
+      "bookingComUrl": ""
+    }
+  ]
+}

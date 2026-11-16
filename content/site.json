@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "url": "https://domiastays.es",
+  "name": "Domia Stays",
+  "legalName": "Domia Stays Group S.L.",
+  "tagline": "Feel at home, anywhere",
+  "phone": "+34 666 64 72 45",
+  "whatsapp": "34666647245",
+  "email": "info@domiastays.com",
+  "locality": "Benidorm",
+  "postalCode": "03500",
+  "region": "Alicante",
+  "country": "ES",
+  "checkInFrom": "17:00",
+  "checkInUntil": "20:00",
+  "checkOutBy": "10:00",
+  "instagram": "",
+  "facebook": ""
+}

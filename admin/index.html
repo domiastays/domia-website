@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Property manager | Domia Stays</title>
+<link rel="icon" href="../assets/brand/monogram-tile.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:300 700;font-display:swap;src:url(../assets/fonts/cormorant-garamond-latin-wght-normal.woff2) format("woff2")}
+@font-face{font-family:"DM Sans";font-style:normal;font-weight:100 1000;font-display:swap;src:url(../assets/fonts/dm-sans-latin-wght-normal.woff2) format("woff2")}
+:root{--navy:#0F2740;--navy-deep:#0A1C2F;--gold:#B08547;--gold-light:#E1D1B9;--cream:#FDEED3;--paper:#F7F5F0;--ink:#1A2430;--soft:#55616F;--rule:rgba(15,39,64,.16);--ok:#2F6B4F;--bad:#A23B2A;--serif:"Cormorant Garamond",Georgia,serif;--sans:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--sans);font-size:16px;line-height:1.55;color:var(--ink);background:var(--paper);font-variant-numeric:lining-nums}
+h1,h2,h3,p,ul,ol,fieldset{margin:0}
+ul,ol{padding:0;list-style:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.top{position:sticky;top:0;z-index:20;background:var(--navy);color:#F4EFE6}
+.top__in{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;min-height:64px;padding-block:10px}
+.top__brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:1.4rem;font-weight:600;color:var(--cream)}
+.top__brand img{width:36px;height:auto}
+.top__brand small{font-family:var(--sans);font-size:.82rem;font-weight:400;color:rgba(244,239,230,.7)}
+.top__status{margin-left:auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:.9rem}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#7A8794;margin-right:6px}
+.dot--on{background:#5FBF8F}
+.dot--dirty{background:var(--gold)}
+.tabs{background:var(--navy-deep)}
+.tabs .wrap{display:flex;gap:4px;overflow-x:auto}
+.tabs button{padding:12px 16px;border:0;border-bottom:3px solid transparent;background:transparent;color:rgba(244,239,230,.78);font-weight:500;white-space:nowrap}
+.tabs button[aria-selected=true]{color:#fff;border-bottom-color:var(--gold)}
+main{padding:32px 0 96px}
+h1{font-family:var(--serif);font-weight:500;font-size:2.3rem;line-height:1.1;color:var(--navy)}
+h2{font-family:var(--serif);font-weight:600;font-size:1.55rem;line-height:1.2;color:var(--navy)}
+h3{font-size:1rem;font-weight:600}
+.lead{font-size:1.08rem;color:var(--soft);max-width:44em}
+.muted{color:var(--soft)}
+.small{font-size:.875rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:9px 18px;border:1px solid transparent;border-radius:999px;font-weight:500;text-decoration:none;background:var(--navy);color:var(--gold-light)}
+.btn:hover{background:#183A5C}
+.btn--gold{background:var(--gold);color:var(--navy);font-weight:600}
+.btn--gold:hover{background:var(--gold-light)}
+.btn--line{background:transparent;color:var(--navy);border-color:rgba(15,39,64,.3)}
+.btn--line:hover{background:rgba(15,39,64,.06)}
+.top .btn--line{color:#F4EFE6;border-color:rgba(244,239,230,.4)}
+.top .btn--line:hover{background:rgba(244,239,230,.1)}
+.btn--danger{background:transparent;color:var(--bad);border-color:rgba(162,59,42,.4)}
+.btn--danger:hover{background:rgba(162,59,42,.08)}
+.btn--sm{min-height:36px;padding:5px 13px;font-size:.875rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.stack{display:grid;gap:16px}
+.card{background:#fff;border:1px solid var(--rule);border-radius:16px;padding:22px}
+.card--gold{border-top:3px solid var(--gold)}
+.note{padding:12px 16px;border-radius:12px;background:#fff;border:1px solid var(--rule);border-left:4px solid var(--gold)}
+.note--bad{border-left-color:var(--bad);color:var(--bad)}
+.note--ok{border-left-color:var(--ok)}
+.steps{counter-reset:s;display:grid;gap:14px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;gap:4px 12px}
+.steps li::before{content:counter(s);grid-row:1/3;font-family:var(--serif);font-size:2rem;line-height:1;color:var(--gold)}
+.steps b{font-weight:600}
+.steps span{color:var(--soft)}
+/* homes list */
+.homes{display:grid;gap:12px;margin-top:20px}
+.home{display:grid;grid-template-columns:88px 1fr;gap:16px;align-items:center;padding:14px;background:#fff;border:1px solid var(--rule);border-radius:16px}
+.home__img{width:88px;height:110px;border-radius:10px;object-fit:cover;background:#E7E2D8}
+.home__name{font-family:var(--serif);font-size:1.5rem;font-weight:600;line-height:1.15;color:var(--navy)}
+.home__acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:500;background:rgba(47,107,79,.12);color:var(--ok)}
+.badge--off{background:rgba(85,97,111,.14);color:var(--soft)}
+.badge--warn{background:rgba(176,133,71,.18);color:#7A5A2A}
+@media (min-width:760px){.home{grid-template-columns:88px 1fr auto}.home__acts{grid-column:auto;justify-content:flex-end;max-width:330px}}
+/* forms */
+label{display:block}
+label > span,.lbl{display:block;margin-bottom:5px;font-size:.86rem;font-weight:500;color:var(--soft)}
+input[type=text],input[type=number],input[type=url],input[type=email],input[type=month],select,textarea{width:100%;min-height:46px;padding:9px 12px;border:1px solid rgba(15,39,64,.26);border-radius:10px;background:#fff}
+textarea{min-height:110px;resize:vertical}
+.hint{display:block;margin-top:5px;font-size:.82rem;color:var(--soft)}
+.err{display:block;margin-top:5px;font-size:.86rem;color:var(--bad);font-weight:500}
+.g2,.g3,.g4{display:grid;gap:14px}
+@media (min-width:700px){.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}}
+fieldset{border:0;padding:0}
+legend{float:left;width:100%;padding:0;font-family:var(--serif);font-weight:600;font-size:1.45rem;color:var(--navy)}
+.checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px 14px}
+.check{display:flex;align-items:center;gap:9px;min-height:36px}
+.check input{width:18px;height:18px;accent-color:var(--navy)}
+.check span{margin:0;font-size:.95rem;font-weight:400;color:var(--ink)}
+.langhead{display:inline-block;margin-bottom:8px;padding:2px 10px;border-radius:999px;background:var(--navy);color:var(--gold-light);font-size:.78rem;font-weight:600;letter-spacing:.04em}
+/* photos */
+.drop{display:grid;place-items:center;gap:6px;padding:26px 16px;border:2px dashed rgba(15,39,64,.3);border-radius:14px;background:#fff;text-align:center}
+.drop.is-over{border-color:var(--gold);background:#FFFBF2}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:14px}
+.photo{display:grid;gap:8px;padding:10px;background:#fff;border:1px solid var(--rule);border-radius:14px}
+.photo__img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;background:#E7E2D8}
+.photo__bar{display:flex;flex-wrap:wrap;gap:6px}
+.photo input{min-height:38px;padding:6px 10px;font-size:.88rem}
+.sticky-save{position:sticky;bottom:0;z-index:10;display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:24px;padding:14px 18px;border:1px solid var(--rule);border-radius:16px;background:#fff;box-shadow:0 -10px 30px -18px rgba(8,20,34,.45)}
+.toast{position:fixed;left:50%;bottom:24px;z-index:60;transform:translateX(-50%);max-width:min(92vw,560px);padding:12px 18px;border-radius:12px;background:var(--navy);color:#fff;box-shadow:0 14px 34px -14px rgba(8,20,34,.7)}
+.toast--bad{background:var(--bad)}
+dialog{max-width:min(92vw,460px);padding:24px;border:0;border-radius:16px;box-shadow:0 30px 70px -20px rgba(8,20,34,.6)}
+dialog::backdrop{background:rgba(8,20,34,.55)}
+.help h2{margin-top:28px}
+.help p,.help li{max-width:46em}
+.help ol{list-style:decimal;padding-left:22px}
+.help ul{list-style:disc;padding-left:22px}
+.help li{margin:6px 0}
+code{padding:1px 6px;border-radius:6px;background:rgba(15,39,64,.08);font-size:.9em}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top__in">
+    <div class="top__brand"><img src="../assets/brand/monogram-gold.svg" alt=""><span>Domia Stays <small>Property manager</small></span></div>
+    <div class="top__status">
+      <span id="status"><span class="dot"></span>No website folder open</span>
+      <a class="btn btn--line btn--sm" id="open-site" href="../index.html" target="_blank" rel="noopener" hidden>View website</a>
+      <button class="btn btn--gold btn--sm" id="save-all" type="button" hidden>Save changes</button>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs" hidden><div class="wrap" role="tablist">
+    <button type="button" role="tab" data-tab="homes">Homes</button>
+    <button type="button" role="tab" data-tab="reviews">Reviews</button>
+    <button type="button" role="tab" data-tab="settings">Settings</button>
+    <button type="button" role="tab" data-tab="help">Help and publishing</button>
+  </div></nav>
+</header>
+<main><div class="wrap" id="view"></div></main>
+<div class="toast" id="toast" role="status" hidden></div>
+<dialog id="confirm"><div class="stack"><h2 id="confirm-title"></h2><p id="confirm-text" class="muted"></p><div class="row"><button class="btn btn--danger" id="confirm-yes" type="button"></button><button class="btn btn--line" id="confirm-no" type="button">Cancel</button></div></div></dialog>
+
+<script src="../build/lib.js"></script>
+<script src="../build/copy.js"></script>
+<script src="../build/templates.js"></script>
+<script src="../build/generate.js"></script>
+<script>
+(function () {
+  'use strict';
+  var L = window.DomiaLib, Build = window.DomiaBuild;
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return [].slice.call((c || document).querySelectorAll(s)); };
+  var e = L.esc;
+  var view = $('#view');
+
+  var state = { root: null, site: null, homes: [], reviews: [], dirty: false, tab: 'homes', editing: null, draft: null, removedIds: [], urls: {}, errors: {} };
+
+  /* ---------------- small helpers ---------------- */
+  function toast(msg, bad) {
+    var t = $('#toast'); t.textContent = msg; t.className = 'toast' + (bad ? ' toast--bad' : ''); t.hidden = false;
+    clearTimeout(toast.timer); toast.timer = setTimeout(function () { t.hidden = true; }, bad ? 9000 : 4200);
+  }
+  function confirmBox(title, text, yes) {
+    return new Promise(function (resolve) {
+      var d = $('#confirm');
+      $('#confirm-title').textContent = title; $('#confirm-text').textContent = text; $('#confirm-yes').textContent = yes;
+      var done = function (v) { d.close(); $('#confirm-yes').onclick = null; $('#confirm-no').onclick = null; resolve(v); };
+      $('#confirm-yes').onclick = function () { done(true); };
+      $('#confirm-no').onclick = function () { done(false); };
+      d.oncancel = function () { resolve(false); };
+      d.showModal();
+    });
+  }
+  function clone(o) { return JSON.parse(JSON.stringify(o, function (k, v) { return k.charAt(0) === '_' ? undefined : v; })); }
+  function setPath(obj, path, value) {
+    var parts = path.split('.'), o = obj;
+    for (var i = 0; i < parts.length - 1; i++) { if (o[parts[i]] == null || typeof o[parts[i]] !== 'object') o[parts[i]] = {}; o = o[parts[i]]; }
+    o[parts[parts.length - 1]] = value;
+  }
+  function getPath(obj, path) { return path.split('.').reduce(function (o, k) { return o == null ? undefined : o[k]; }, obj); }
+  function markDirty() { state.dirty = true; renderChrome(); }
+
+  /* ---------------- the website folder (File System Access API) ---------------- */
+  var fs = {
+    locate: async function (path, create) {
+      var parts = path.split('/'), name = parts.pop(), dir = state.root;
+      for (var i = 0; i < parts.length; i++) dir = await dir.getDirectoryHandle(parts[i], { create: !!create });
+      return { dir: dir, name: name };
+    },
+    readText: async function (path) { var l = await fs.locate(path); return (await (await l.dir.getFileHandle(l.name)).getFile()).text(); },
+    exists: async function (path) { try { var l = await fs.locate(path); await l.dir.getFileHandle(l.name); return true; } catch (x) { return false; } },
+    write: async function (path, data) {
+      var l = await fs.locate(path, true), fh = await l.dir.getFileHandle(l.name, { create: true }), w = await fh.createWritable();
+      await w.write(data); await w.close();
+    },
+    writeTextIfChanged: async function (path, text) {
+      try { if ((await fs.readText(path)) === text) return false; } catch (x) { /* new file */ }
+      await fs.write(path, text); return true;
+    },
+    remove: async function (path, recursive) { try { var l = await fs.locate(path); await l.dir.removeEntry(l.name, { recursive: !!recursive }); return true; } catch (x) { return false; } },
+    list: async function (path) {
+      var out = [];
+      try {
+        var dir = state.root;
+        if (path) { var parts = path.split('/'); for (var i = 0; i < parts.length; i++) dir = await dir.getDirectoryHandle(parts[i]); }
+        for await (var entry of dir.entries()) out.push({ name: entry[0], kind: entry[1].kind });
+      } catch (x) { /* missing folder */ }
+      return out;
+    },
+    url: async function (path) {
+      if (state.urls[path]) return state.urls[path];
+      try { var l = await fs.locate(path); var f = await (await l.dir.getFileHandle(l.name)).getFile(); return (state.urls[path] = URL.createObjectURL(f)); } catch (x) { return ''; }
+    }
+  };
+  function idb(mode, fn) {
+    return new Promise(function (resolve, reject) {
+      var open = indexedDB.open('domia-property-manager', 1);
+      open.onupgradeneeded = function () { open.result.createObjectStore('kv'); };
+      open.onerror = function () { reject(open.error); };
+      open.onsuccess = function () {
+        var tx = open.result.transaction('kv', mode), req = fn(tx.objectStore('kv'));
+        tx.oncomplete = function () { resolve(req && req.result); };
+        tx.onerror = function () { reject(tx.error); };
+      };
+    });
+  }
+
+  async function connect(handle) {
+    state.root = handle;
+    var ok = await fs.exists('content/properties.json');
+    if (!ok) { state.root = null; throw new Error('That folder is not the website folder. Choose the folder that contains index.html and the "content" folder.'); }
+    state.site = JSON.parse(await fs.readText('content/site.json'));
+    var p = JSON.parse(await fs.readText('content/properties.json'));
+    state.homes = (p.properties || []).map(L.cleanHome);
+    var r = { reviews: [] };
+    try { r = JSON.parse(await fs.readText('content/reviews.json')); } catch (x) { /* optional */ }
+    state.reviews = r.reviews || [];
+    state.dirty = false; state.removedIds = []; state.urls = {}; state.editing = null; state.draft = null; state.tab = 'homes';
+    try { await idb('readwrite', function (s) { return s.put(handle, 'dir'); }); } catch (x) { /* remembering the folder is a convenience */ }
+    render();
+  }
+
+  /* ---------------- photos ---------------- */
+  async function processPhoto(file) {
+    var bmp;
+    try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+    catch (x) { throw new Error('"' + file.name + '" could not be opened. Use JPG or PNG photos. iPhone HEIC photos need exporting as JPG first.'); }
+    async function render(scale, quality) {
+      var w = Math.max(1, Math.round(bmp.width * scale)), h = Math.max(1, Math.round(bmp.height * scale));
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.drawImage(bmp, 0, 0, w, h);
+      var blob = await new Promise(function (res) { c.toBlob(res, 'image/jpeg', quality); });
+      return { blob: blob, w: w, h: h };
+    }
+    var large = await render(Math.min(1, 2000 / Math.max(bmp.width, bmp.height)), 0.84);
+    var small = await render(Math.min(1, 800 / large.w) * (large.w / bmp.width), 0.8);
+    if (bmp.close) bmp.close();
+    return { file: null, w: large.w, h: large.h, alt: { en: '', es: '' }, _blob: large.blob, _blobSm: small.blob, _url: URL.createObjectURL(small.blob) };
+  }
+  async function addPhotos(files) {
+    var list = [].slice.call(files).filter(function (f) { return /^image\//.test(f.type) || /\.(jpe?g|png|webp|heic)$/i.test(f.name); });
+    if (!list.length) return;
+    toast('Preparing ' + list.length + (list.length === 1 ? ' photo…' : ' photos…'));
+    for (var i = 0; i < list.length; i++) {
+      try { state.draft.photos.push(await processPhoto(list[i])); } catch (x) { toast(x.message, true); }
+    }
+    markDirty(); renderPhotos();
+  }
+  function nextPhotoName(home, used) {
+    var n = 0;
+    (home.photos || []).forEach(function (p) { var m = /-(\d+)\.jpg$/i.exec(p.file || ''); if (m) n = Math.max(n, +m[1]); });
+    used.forEach(function (name) { var m = /-(\d+)\.jpg$/i.exec(name); if (m) n = Math.max(n, +m[1]); });
+    n++;
+    return home.id + '-' + (n < 10 ? '0' : '') + n + '.jpg';
+  }
+
+  /* ---------------- saving: content files, photos, and every page ---------------- */
+  async function saveAll() {
+    if (!state.root) return;
+    var btn = $('#save-all'); btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      var ids = {};
+      state.homes.forEach(function (h) {
+        if (!h.id) throw new Error('"' + (h.name || 'A home') + '" has no web address.');
+        if (ids[h.id]) throw new Error('Two homes use the web address "' + h.id + '". Change one of the names.');
+        ids[h.id] = true;
+      });
+      // 1. new photos
+      for (var i = 0; i < state.homes.length; i++) {
+        var h = state.homes[i], used = [];
+        for (var k = 0; k < h.photos.length; k++) {
+          var ph = h.photos[k];
+          if (!ph._blob) continue;
+          ph.file = nextPhotoName(h, used); used.push(ph.file);
+          await fs.write('assets/properties/' + h.id + '/' + ph.file, ph._blob);
+          await fs.write('assets/properties/' + h.id + '/' + L.photoSmall(ph.file), ph._blobSm);
+          delete ph._blob; delete ph._blobSm;
+        }
+      }
+      // 2. content files
+      var site = clone(state.site), props = { version: 1, properties: clone(state.homes) }, revs = { version: 1, reviews: clone(state.reviews) };
+      await fs.write('content/site.json', JSON.stringify(site, null, 2));
+      await fs.write('content/properties.json', JSON.stringify(props, null, 2));
+      await fs.write('content/reviews.json', JSON.stringify(revs, null, 2));
+      // 3. pages
+      var out = Build.generate({ site: site, properties: props, reviews: revs });
+      var changed = 0, names = Object.keys(out.files);
+      for (var n = 0; n < names.length; n++) if (await fs.writeTextIfChanged(names[n], out.files[names[n]])) changed++;
+      // 4. tidy up: pages of removed or hidden homes, photos no longer used, folders of deleted homes
+      var rootFiles = await fs.list('');
+      for (var r = 0; r < rootFiles.length; r++) {
+        var nm = rootFiles[r].name;
+        if (rootFiles[r].kind === 'file' && Build.HOME_PAGE_PATTERN.test(nm) && !(nm in out.files)) await fs.remove(nm);
+      }
+      if (!('sitemap.xml' in out.files)) await fs.remove('sitemap.xml');
+      for (var j = 0; j < state.homes.length; j++) {
+        var hm = state.homes[j], keep = {};
+        hm.photos.forEach(function (p) { keep[p.file] = true; keep[L.photoSmall(p.file)] = true; });
+        var inDir = await fs.list('assets/properties/' + hm.id);
+        for (var q = 0; q < inDir.length; q++) if (inDir[q].kind === 'file' && /\.(jpe?g|png|webp)$/i.test(inDir[q].name) && !keep[inDir[q].name]) await fs.remove('assets/properties/' + hm.id + '/' + inDir[q].name);
+      }
+      for (var d = 0; d < state.removedIds.length; d++) if (!ids[state.removedIds[d]]) await fs.remove('assets/properties/' + state.removedIds[d], true);
+      state.removedIds = []; state.dirty = false; state.lastNotes = out.notes; state.lastSaved = new Date();
+      render();
+      toast('Saved. ' + (changed === 1 ? '1 file' : changed + ' files') + ' updated on your computer. Publish when you are ready (see Help and publishing).');
+    } catch (x) {
+      console.error(x);
+      toast('Could not save: ' + x.message, true);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Save changes';
+    }
+  }
+
+  /* ---------------- views ---------------- */
+  function renderChrome() {
+    var on = !!state.root;
+    $('#tabs').hidden = !on; $('#save-all').hidden = !on; $('#open-site').hidden = !on;
+    $('#status').innerHTML = on
+      ? (state.dirty ? '<span class="dot dot--dirty"></span>Unsaved changes' : '<span class="dot dot--on"></span>Folder: ' + e(state.root.name))
+      : '<span class="dot"></span>No website folder open';
+    $('#save-all').disabled = !state.dirty;
+    $$('#tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === state.tab)); });
+  }
+
+  function render() {
+    renderChrome();
+    if (!state.root) return renderConnect();
+    if (state.tab === 'homes') return state.draft ? renderEditor() : renderHomes();
+    if (state.tab === 'reviews') return renderReviews();
+    if (state.tab === 'settings') return renderSettings();
+    return renderHelp();
+  }
+
+  function renderConnect() {
+    var supported = 'showDirectoryPicker' in window;
+    var h = '<div class="stack" style="max-width:720px"><h1>Manage your homes</h1>';
+    h += '<p class="lead">Add, edit, hide or remove the homes on your website. Everything happens on this computer and works without internet. You only need to be online when you publish.</p>';
+    if (!supported) {
+      h += '<p class="note note--bad">This browser cannot save files into a folder. Open this page in <b>Google Chrome</b> or <b>Microsoft Edge</b> on a computer.</p></div>';
+      view.innerHTML = h; return;
+    }
+    h += '<div class="card card--gold stack"><ol class="steps">';
+    h += '<li><b>Open the website folder</b><span>It is the folder called <code>domia-website</code> on this computer (the one with index.html inside).</span></li>';
+    h += '<li><b>Change what you need</b><span>Fill in the form for a home, drop in the photos, set the price.</span></li>';
+    h += '<li><b>Save</b><span>The manager rewrites every page of the site in English and Spanish.</span></li>';
+    h += '<li><b>Publish</b><span>Send the changes to GitHub with GitHub Desktop. The live site updates about a minute later.</span></li></ol>';
+    h += '<div class="row" id="connect-row"><button class="btn btn--gold" type="button" data-act="pick">Open the website folder</button></div>';
+    h += '<p class="small muted">Chrome asks for permission to view and edit the folder. Choose "Allow" or "Edit files" so the manager can save your changes.</p></div></div>';
+    view.innerHTML = h;
+    // If Chrome still remembers the folder from last time, offer it as a one-click shortcut.
+    // The flag below makes this self-healing: if reading the remembered folder ever stopped the page
+    // from loading, the next visit skips it and forgets the folder instead of failing again.
+    state.remembered = null;
+    var FLAG = 'domia-pm-reading-folder', lookup;
+    var crashedLastTime = false;
+    try { crashedLastTime = localStorage.getItem(FLAG) === '1'; } catch (x) { /* storage unavailable */ }
+    if (crashedLastTime) {
+      try { localStorage.removeItem(FLAG); indexedDB.deleteDatabase('domia-property-manager'); } catch (x) { /* ignore */ }
+      lookup = Promise.resolve(null);
+    } else {
+      try { localStorage.setItem(FLAG, '1'); } catch (x) { /* ignore */ }
+      lookup = idb('readonly', function (s) { return s.get('dir'); }).then(function (handle) {
+        try { localStorage.removeItem(FLAG); } catch (x) { /* ignore */ }
+        return handle;
+      });
+    }
+    Promise.race([
+      lookup,
+      new Promise(function (res) { setTimeout(function () { res(null); }, 2000); })
+    ]).then(function (handle) {
+      var row = $('#connect-row');
+      if (!handle || !row || state.root) return;
+      state.remembered = handle;
+      var again = document.createElement('button');
+      again.className = 'btn btn--gold'; again.type = 'button'; again.dataset.act = 'reconnect';
+      again.textContent = 'Open "' + handle.name + '" again';
+      var pick = $('[data-act=pick]', row); pick.className = 'btn btn--line'; pick.textContent = 'Choose another folder';
+      row.insertBefore(again, pick);
+    }).catch(function () { /* remembering the folder is a convenience */ });
+  }
+
+  function homeProblems(h) {
+    return L.checkHome(h).map(function (w) {
+      return w.replace(/ \(.*$/, '').replace(/^has no /, 'No ').replace(/^does not say how many guests it sleeps$/, 'No guest count');
+    });
+  }
+
+  async function renderHomes() {
+    var h = '<div class="row between"><div><h1>Homes</h1><p class="muted">' + state.homes.filter(function (x) { return x.status === 'published'; }).length + ' on the website, ' + state.homes.filter(function (x) { return x.status !== 'published'; }).length + ' hidden. The order here is the order on the site.</p></div><button class="btn btn--gold" type="button" data-act="new">Add a home</button></div>';
+    if (state.lastNotes && state.lastNotes.length) h += '<details class="note" style="margin-top:16px"><summary><b>' + state.lastNotes.length + ' things worth completing</b> (the site works without them)</summary><ul class="small" style="margin-top:8px;list-style:disc;padding-left:20px">' + state.lastNotes.map(function (n) { return '<li>' + e(n) + '</li>'; }).join('') + '</ul></details>';
+    if (!state.homes.length) h += '<div class="card" style="margin-top:20px"><h2>No homes yet</h2><p class="muted">Add your first home. It appears on the website after you save and publish.</p></div>';
+    h += '<ul class="homes">';
+    state.homes.forEach(function (x, i) {
+      var prob = homeProblems(x);
+      h += '<li class="home"><img class="home__img" alt="" data-thumb="' + i + '"><div><p class="home__name">' + e(x.name || 'Untitled home') + '</p><p class="muted small">' + e([x.area, x.town].filter(Boolean).join(', ') || 'No area yet') + (x.priceFrom ? ' · from ' + L.money(x.priceFrom) + ' / night' : '') + ' · ' + x.photos.length + (x.photos.length === 1 ? ' photo' : ' photos') + '</p><p style="margin-top:6px"><span class="badge' + (x.status === 'published' ? '' : ' badge--off') + '">' + (x.status === 'published' ? 'On the website' : 'Hidden') + '</span>' + prob.map(function (w) { return ' <span class="badge badge--warn">' + e(w) + '</span>'; }).join('') + '</p></div>';
+      h += '<div class="home__acts"><button class="btn btn--sm" type="button" data-act="edit" data-i="' + i + '">Edit</button><button class="btn btn--line btn--sm" type="button" data-act="toggle" data-i="' + i + '">' + (x.status === 'published' ? 'Hide' : 'Show') + '</button><button class="btn btn--line btn--sm" type="button" data-act="up" data-i="' + i + '"' + (i === 0 ? ' disabled' : '') + ' aria-label="Move up">↑</button><button class="btn btn--line btn--sm" type="button" data-act="down" data-i="' + i + '"' + (i === state.homes.length - 1 ? ' disabled' : '') + ' aria-label="Move down">↓</button><button class="btn btn--line btn--sm" type="button" data-act="dup" data-i="' + i + '">Duplicate</button><button class="btn btn--danger btn--sm" type="button" data-act="del" data-i="' + i + '">Delete</button></div></li>';
+    });
+    h += '</ul>';
+    view.innerHTML = h;
+    state.homes.forEach(async function (x, i) {
+      var ph = x.photos[0]; if (!ph) return;
+      var url = ph._url || (await fs.url('assets/properties/' + x.id + '/' + L.photoSmall(ph.file)));
+      var img = $('[data-thumb="' + i + '"]'); if (img && url) img.src = url;
+    });
+  }
+
+  function field(label, path, opts) {
+    opts = opts || {};
+    var v = getPath(state.draft, path); if (v == null) v = '';
+    var err = state.errors[path] ? '<span class="err">' + e(state.errors[path]) + '</span>' : '';
+    var hint = opts.hint ? '<span class="hint">' + opts.hint + '</span>' : '';
+    if (opts.type === 'textarea') return '<label><span>' + label + '</span><textarea data-f="' + path + '" rows="' + (opts.rows || 4) + '"' + (opts.lang ? ' lang="' + opts.lang + '"' : '') + '>' + e(v) + '</textarea>' + hint + err + '</label>';
+    if (opts.type === 'select') return '<label><span>' + label + '</span><select data-f="' + path + '">' + opts.options.map(function (o) { return '<option value="' + e(o[0]) + '"' + (String(v) === String(o[0]) ? ' selected' : '') + '>' + e(o[1]) + '</option>'; }).join('') + '</select>' + hint + err + '</label>';
+    return '<label><span>' + label + '</span><input type="' + (opts.type || 'text') + '" data-f="' + path + '" value="' + e(v === 0 && opts.type === 'number' ? '' : v) + '"' + (opts.type === 'number' ? ' min="0" inputmode="numeric" data-num' : '') + (opts.list ? ' list="' + opts.list + '"' : '') + (opts.ph ? ' placeholder="' + e(opts.ph) + '"' : '') + (opts.lang ? ' lang="' + opts.lang + '"' : '') + '>' + hint + err + '</label>';
+  }
+
+  function renderEditor() {
+    var d = state.draft, isNew = state.editing === -1;
+    var areas = []; state.homes.forEach(function (x) { if (x.area && areas.indexOf(x.area) < 0) areas.push(x.area); });
+    var extras = { en: (d.amenitiesExtra || []).map(function (x) { return x.en || ''; }).join('\n'), es: (d.amenitiesExtra || []).map(function (x) { return x.es || ''; }).join('\n') };
+    var h = '<form id="editor" class="stack" novalidate><div class="row between"><div><p><button class="btn btn--line btn--sm" type="button" data-act="back">← All homes</button></p><h1 style="margin-top:12px">' + (isNew ? 'Add a home' : e(d.name || 'Edit home')) + '</h1></div></div>';
+    if (Object.keys(state.errors).length) h += '<p class="note note--bad">Some fields need attention before this home can be saved. They are marked in red below.</p>';
+
+    h += '<fieldset class="card stack"><legend>The basics</legend><div class="g2">' + field('Name of the home', 'name', { ph: 'e.g. Mirador del Levante' });
+    h += '<label><span>Web address</span><input type="text" value="' + e('properties_' + (d.id || L.slugify(d.name) || '…') + '.html') + '" disabled id="slug-preview"><span class="hint">' + (isNew ? 'Made from the name. It stays the same after the first save, so links you share keep working.' : 'Fixed, so links you have shared keep working.') + '</span></label></div>';
+    h += '<div class="g3">' + field('Area', 'area', { list: 'areas', ph: 'e.g. Playa de Levante', hint: 'Used for the area filter. Pick an existing one or type a new one.' }) + field('Town', 'town', { ph: 'Benidorm' }) + field('Type', 'type', { type: 'select', options: L.HOME_TYPES.map(function (t) { return [t.key, t.en]; }) }) + '</div>';
+    h += '<datalist id="areas">' + areas.map(function (a) { return '<option value="' + e(a) + '">'; }).join('') + '</datalist>';
+    h += '<div class="g2">' + field('Shown on the website?', 'status', { type: 'select', options: [['published', 'Yes, show it'], ['hidden', 'No, keep it hidden for now']] }) + field('Show on the home page?', 'featured', { type: 'select', options: [['true', 'Yes (the first six are shown)'], ['false', 'No, only in the collection']] }) + '</div></fieldset>';
+
+    h += '<fieldset class="card stack"><legend>Price and size</legend><div class="g4">' + field('Price from (€ per night)', 'priceFrom', { type: 'number', ph: '145' }) + field('Bedrooms', 'bedrooms', { type: 'number', hint: 'Leave empty for a studio.' }) + field('Bathrooms', 'bathrooms', { type: 'number' }) + field('Sleeps (guests)', 'guests', { type: 'number' }) + '</div><div class="g4">' + field('Size (m²)', 'size', { type: 'number' }) + field('Minimum nights', 'minNights', { type: 'number', hint: 'Optional.' }) + '</div></fieldset>';
+
+    h += '<fieldset class="card stack"><legend>Photos</legend><p class="muted">The first photo is the cover. Drop in the originals; the manager resizes them for the web. Six to twelve good photos is ideal.</p>';
+    h += '<div class="drop" id="drop"><p><b>Drop photos here</b> or</p><label class="btn btn--line" style="cursor:pointer">Choose photos<input type="file" id="pick-photos" accept="image/*" multiple hidden></label><p class="small muted">JPG or PNG</p></div>';
+    h += '<ul class="photos" id="photos"></ul>' + (state.errors.photos ? '<span class="err">' + e(state.errors.photos) + '</span>' : '') + '</fieldset>';
+
+    h += '<fieldset class="card stack"><legend>Description</legend><p class="muted">Write the English. If you leave the Spanish empty, the Spanish pages show the English text.</p><div class="g2"><div class="stack"><span class="langhead">ENGLISH</span>' + field('Short label on the photo', 'tag.en', { ph: 'e.g. Sea front', hint: 'One or two words. Optional.', lang: 'en' }) + field('One-line summary', 'summary.en', { ph: 'Front-line views over the golden crescent of Levante.', lang: 'en' }) + field('Full description', 'description.en', { type: 'textarea', rows: 7, hint: 'Leave an empty line between paragraphs.', lang: 'en' }) + '</div>';
+    h += '<div class="stack"><span class="langhead">ESPAÑOL</span>' + field('Etiqueta corta', 'tag.es', { ph: 'p. ej. Primera línea', hint: 'Una o dos palabras. Opcional.', lang: 'es' }) + field('Resumen en una línea', 'summary.es', { lang: 'es' }) + field('Descripción completa', 'description.es', { type: 'textarea', rows: 7, hint: 'Deja una línea vacía entre párrafos.', lang: 'es' }) + '</div></div></fieldset>';
+
+    h += '<fieldset class="card stack"><legend>What\'s inside</legend><div class="checks">' + L.AMENITIES.map(function (a) { return '<label class="check"><input type="checkbox" data-am="' + a.key + '"' + (d.amenities.indexOf(a.key) >= 0 ? ' checked' : '') + '><span>' + e(a.en) + '</span></label>'; }).join('') + '</div>';
+    h += '<div class="g2"><label><span>Anything else (English, one per line)</span><textarea id="extra-en" rows="3" lang="en">' + e(extras.en) + '</textarea></label><label><span>Lo mismo en español (una por línea)</span><textarea id="extra-es" rows="3" lang="es">' + e(extras.es) + '</textarea><span class="hint">Same order as the English lines.</span></label></div></fieldset>';
+
+    h += '<fieldset class="card stack"><legend>Licence and booking links</legend><div class="g2">' + field('Tourist licence number', 'licence', { ph: 'e.g. VT-123456-A', hint: 'Shown on the page of this home. Advertising a tourist home in the Comunitat Valenciana has to show its registration number.' }) + field('Book online link', 'bookingUrl', { type: 'url', ph: 'https://', hint: 'Optional. For example the Lodgify booking page of this home. Adds a "Book online" link.' }) + '</div><div class="g2">' + field('Airbnb link', 'airbnbUrl', { type: 'url', ph: 'https://', hint: 'Optional.' }) + field('Booking.com link', 'bookingComUrl', { type: 'url', ph: 'https://', hint: 'Optional.' }) + '</div></fieldset>';
+
+    h += '<div class="sticky-save"><button class="btn btn--gold" type="submit">Save this home</button><button class="btn btn--line" type="button" data-act="back">Cancel</button>' + (isNew ? '' : '<a class="btn btn--line" href="../' + e(L.homeFile(d.id, 'en')) + '" target="_blank" rel="noopener">View its page</a>') + '<span class="small muted">Saving rewrites the website files on this computer. Nothing goes online until you publish.</span></div></form>';
+    view.innerHTML = h;
+    renderPhotos();
+  }
+
+  async function renderPhotos() {
+    var box = $('#photos'); if (!box) return;
+    var d = state.draft, html = '';
+    d.photos.forEach(function (p, i) {
+      html += '<li class="photo"><img class="photo__img" alt="" data-ph="' + i + '"><div class="photo__bar">' + (i === 0 ? '<span class="badge">Cover</span>' : '<button class="btn btn--line btn--sm" type="button" data-act="ph-cover" data-i="' + i + '">Make cover</button>') + '<button class="btn btn--line btn--sm" type="button" data-act="ph-left" data-i="' + i + '"' + (i === 0 ? ' disabled' : '') + ' aria-label="Move earlier">←</button><button class="btn btn--line btn--sm" type="button" data-act="ph-right" data-i="' + i + '"' + (i === d.photos.length - 1 ? ' disabled' : '') + ' aria-label="Move later">→</button><button class="btn btn--danger btn--sm" type="button" data-act="ph-del" data-i="' + i + '">Remove</button></div>';
+      html += '<input type="text" data-f="photos.' + i + '.alt.en" value="' + e((p.alt && p.alt.en) || '') + '" placeholder="What the photo shows (English)" aria-label="What the photo shows, English" lang="en"><input type="text" data-f="photos.' + i + '.alt.es" value="' + e((p.alt && p.alt.es) || '') + '" placeholder="Qué muestra la foto (español)" aria-label="What the photo shows, Spanish" lang="es"></li>';
+    });
+    box.innerHTML = html;
+    for (var i = 0; i < d.photos.length; i++) {
+      var p = d.photos[i], url = p._url || (await fs.url('assets/properties/' + d.id + '/' + L.photoSmall(p.file)));
+      var img = $('[data-ph="' + i + '"]', box); if (img && url) img.src = url;
+    }
+  }
+
+  function validateDraft() {
+    var d = state.draft, errs = {};
+    if (!String(d.name || '').trim()) errs.name = 'Give the home a name.';
+    if (!String(d.area || '').trim()) errs.area = 'Say which area it is in.';
+    if (!(Number(d.priceFrom) > 0)) errs.priceFrom = 'Add the lowest price per night.';
+    if (!(Number(d.guests) > 0)) errs.guests = 'Say how many guests it sleeps.';
+    if (!L.tx(d.description, 'en') && !L.tx(d.summary, 'en')) errs['description.en'] = 'Write at least a summary or a description.';
+    var id = state.editing === -1 ? L.slugify(d.name) : d.id;
+    if (id && state.homes.some(function (x, i) { return x.id === id && i !== state.editing; })) errs.name = 'Another home already uses this name. Choose a different one.';
+    return errs;
+  }
+
+  function commitDraft() {
+    var d = state.draft;
+    d.amenitiesExtra = [];
+    var en = $('#extra-en').value.split('\n'), es = $('#extra-es').value.split('\n');
+    en.forEach(function (line, i) { if (line.trim()) d.amenitiesExtra.push({ en: line.trim(), es: (es[i] || '').trim() }); });
+    d.featured = String(d.featured) !== 'false';
+    if (state.editing === -1) d.id = L.slugify(d.name);
+    if (!d.town) d.town = state.site.locality || 'Benidorm';
+    var photos = d.photos;
+    var cleaned = L.cleanHome(d);
+    cleaned.photos = photos.filter(function (p) { return p._blob || p.file; });
+    if (state.editing === -1) state.homes.push(cleaned); else state.homes[state.editing] = cleaned;
+  }
+
+  function renderReviews() {
+    var h = '<div class="row between"><div><h1>Reviews</h1><p class="lead">Only add reviews that real guests wrote, with where they came from (Airbnb, Booking.com, Google). The website shows a reviews section once there is at least one.</p></div><button class="btn btn--gold" type="button" data-act="rev-new">Add a review</button></div><div class="stack" style="margin-top:20px">';
+    if (!state.reviews.length) h += '<div class="card"><h2>No reviews yet</h2><p class="muted">The reviews section stays off the website until you add one.</p></div>';
+    state.reviews.forEach(function (r, i) {
+      h += '<div class="card stack" data-rev="' + i + '"><div class="g3"><label><span>Guest name</span><input type="text" data-r="author" value="' + e(r.author || '') + '" placeholder="e.g. Emma R."></label><label><span>From</span><input type="text" data-r="origin" value="' + e(r.origin || '') + '" placeholder="e.g. Manchester"></label><label><span>Where it was posted</span><select data-r="source">' + ['', 'Airbnb', 'Booking.com', 'Google', 'VRBO', 'Direct guest'].map(function (s) { return '<option' + (r.source === s ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select></label></div>';
+      h += '<div class="g3"><label><span>Date</span><input type="text" data-r="date" value="' + e(r.date || '') + '" placeholder="e.g. August 2027"></label><label><span>Stars</span><select data-r="rating">' + [5, 4, 3, 2, 1].map(function (n) { return '<option' + (Number(r.rating || 5) === n ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select></label><label><span>About which home?</span><select data-r="home"><option value="">Domia Stays in general</option>' + state.homes.map(function (x) { return '<option value="' + e(x.id) + '"' + (r.home === x.id ? ' selected' : '') + '>' + e(x.name) + '</option>'; }).join('') + '</select></label></div>';
+      h += '<div class="g2"><label><span>The review, in English</span><textarea data-r="text.en" rows="4" lang="en">' + e((r.text && r.text.en) || '') + '</textarea></label><label><span>In Spanish (optional)</span><textarea data-r="text.es" rows="4" lang="es">' + e((r.text && r.text.es) || '') + '</textarea></label></div><div class="row"><button class="btn btn--danger btn--sm" type="button" data-act="rev-del" data-i="' + i + '">Remove this review</button></div></div>';
+    });
+    h += '</div>';
+    view.innerHTML = h;
+  }
+
+  function renderSettings() {
+    var s = state.site;
+    function f(label, key, hint, ph) { return '<label><span>' + label + '</span><input type="text" data-s="' + key + '" value="' + e(s[key] || '') + '"' + (ph ? ' placeholder="' + e(ph) + '"' : '') + '>' + (hint ? '<span class="hint">' + hint + '</span>' : '') + '</label>'; }
+    var h = '<div class="stack"><div><h1>Settings</h1><p class="lead">Details used on every page. Change them here once and save.</p></div>';
+    h += '<fieldset class="card stack"><legend>Website</legend>' + f('Website address', 'url', 'With https:// and no slash at the end. Used for Google, the sitemap and link previews on WhatsApp.', 'https://domiastays.es') + '</fieldset>';
+    h += '<fieldset class="card stack"><legend>Contact details</legend><div class="g3">' + f('Phone, as shown', 'phone', '', '+34 666 64 72 45') + f('WhatsApp number', 'whatsapp', 'Digits only, with the country code. For example 34666647245.') + f('Email', 'email') + '</div><div class="g3">' + f('Town', 'locality') + f('Postcode', 'postalCode') + f('Province', 'region') + '</div><div class="g2">' + f('Instagram link', 'instagram', 'Optional.', 'https://') + f('Facebook link', 'facebook', 'Optional.', 'https://') + '</div></fieldset>';
+    h += '<fieldset class="card stack"><legend>Check-in and check-out</legend><div class="g3">' + f('Check-in from', 'checkInFrom', '', '17:00') + f('Check-in until', 'checkInUntil', '', '20:00') + f('Check-out by', 'checkOutBy', '', '10:00') + '</div><p class="small muted">These times appear on every home, on the home page and in the guest FAQ.</p></fieldset></div>';
+    view.innerHTML = h;
+  }
+
+  function renderHelp() {
+    var h = '<div class="help stack"><div><h1>Help and publishing</h1><p class="lead">This manager changes the website files on your computer. Publishing sends those files to GitHub, which puts them online.</p></div>';
+    h += '<div class="card card--gold"><h2 style="margin-top:0">Publish your changes</h2><ol><li>Save here first.</li><li>Open <b>GitHub Desktop</b>. The changed files are listed on the left.</li><li>Type a short note at the bottom left, for example "Add Casa Azul".</li><li>Click <b>Commit to main</b>, then <b>Push origin</b> at the top.</li><li>Wait about a minute, then refresh the website.</li></ol><p class="small muted">Changed your mind before publishing? In GitHub Desktop, right-click the files and choose "Discard changes".</p></div>';
+    h += '<h2>Add a home</h2><ol><li>Homes, then <b>Add a home</b>.</li><li>Fill in the name, area, price and how many guests it sleeps.</li><li>Drop in the photos and put the best one first.</li><li>Write the summary and description. Add the licence number.</li><li><b>Save this home</b>, then publish.</li></ol>';
+    h += '<h2>Change a price, a photo or a description</h2><p>Homes, then <b>Edit</b> on the home, change it, <b>Save this home</b>, publish.</p>';
+    h += '<h2>Take a home off the website</h2><ul><li><b>Hide</b> keeps everything but removes the home from the site. Use it for homes that are paused.</li><li><b>Delete</b> removes the home and its photos for good.</li></ul>';
+    h += '<h2>Good photos</h2><ul><li>Landscape and portrait both work. The site crops the previews and shows the whole photo when a guest opens it.</li><li>Use the originals from the camera or photographer. The manager makes the web sizes.</li><li>iPhone photos in HEIC format need exporting as JPG first (in Photos: File, Export, JPEG).</li></ul>';
+    h += '<h2>If something looks wrong</h2><ul><li>Nothing is online until you publish, so you can always discard changes in GitHub Desktop.</li><li>Every published version is kept on GitHub. An older version can be restored.</li><li>Text that is not part of a listing (home page, owners page, FAQ) lives in the file <code>build/copy.js</code>.</li></ul></div>';
+    view.innerHTML = h;
+  }
+
+  /* ---------------- events ---------------- */
+  function blankHome() {
+    return { id: '', status: 'published', featured: true, name: '', type: 'apartment', area: '', town: (state.site && state.site.locality) || 'Benidorm', priceFrom: 0, bedrooms: 0, bathrooms: 0, guests: 0, size: 0, minNights: 0, tag: { en: '', es: '' }, summary: { en: '', es: '' }, description: { en: '', es: '' }, amenities: [], amenitiesExtra: [], photos: [], licence: '', bookingUrl: '', airbnbUrl: '', bookingComUrl: '' };
+  }
+  function startEdit(i) {
+    state.editing = i; state.errors = {};
+    if (i === -1) state.draft = blankHome();
+    else { state.draft = clone(state.homes[i]); state.draft.photos = state.homes[i].photos.map(function (p) { var c = clone(p); ['_blob', '_blobSm', '_url'].forEach(function (k) { if (p[k]) c[k] = p[k]; }); return c; }); }
+    render(); window.scrollTo(0, 0);
+  }
+
+  document.addEventListener('click', async function (ev) {
+    var b = ev.target.closest('[data-act],[data-tab]'); if (!b) return;
+    if (b.dataset.tab) {
+      if (state.draft && state.tab === 'homes' && b.dataset.tab !== 'homes') { state.draft = null; state.editing = null; }
+      state.tab = b.dataset.tab; render(); return;
+    }
+    var act = b.dataset.act, i = +b.dataset.i;
+    try {
+      if (act === 'pick') { var handle = await window.showDirectoryPicker({ mode: 'readwrite', id: 'domia-website' }); await connect(handle); }
+      else if (act === 'reconnect') {
+        var rh = state.remembered;
+        if (rh.requestPermission && (await rh.requestPermission({ mode: 'readwrite' })) !== 'granted') { toast('Permission was not given. Click the button again and choose "Allow".', true); return; }
+        try { await connect(rh); }
+        catch (x) { try { await idb('readwrite', function (st) { return st.delete('dir'); }); } catch (y) { /* ignore */ } state.remembered = null; state.root = null; render(); toast('That folder could not be opened. It may have been moved or renamed. Choose it again.', true); }
+      }
+      else if (act === 'new') startEdit(-1);
+      else if (act === 'edit') startEdit(i);
+      else if (act === 'back') { state.draft = null; state.editing = null; state.errors = {}; render(); }
+      else if (act === 'toggle') { state.homes[i].status = state.homes[i].status === 'published' ? 'hidden' : 'published'; markDirty(); render(); }
+      else if (act === 'up' || act === 'down') { var j = act === 'up' ? i - 1 : i + 1; var t = state.homes[i]; state.homes[i] = state.homes[j]; state.homes[j] = t; markDirty(); render(); }
+      else if (act === 'dup') { var c = clone(state.homes[i]); c.id = ''; c.name = 'Copy of ' + c.name; c.photos = []; c.status = 'hidden'; c.licence = ''; state.draft = c; state.editing = -1; state.errors = {}; render(); window.scrollTo(0, 0); }
+      else if (act === 'del') {
+        var hm = state.homes[i];
+        if (await confirmBox('Delete "' + hm.name + '"?', 'Its page and its photos are removed from the website folder when you save. To take it off the site but keep everything, use Hide instead.', 'Delete this home')) { state.removedIds.push(hm.id); state.homes.splice(i, 1); markDirty(); render(); }
+      }
+      else if (act === 'ph-del') { state.draft.photos.splice(i, 1); markDirty(); renderPhotos(); }
+      else if (act === 'ph-cover') { state.draft.photos.unshift(state.draft.photos.splice(i, 1)[0]); markDirty(); renderPhotos(); }
+      else if (act === 'ph-left' || act === 'ph-right') { var k = act === 'ph-left' ? i - 1 : i + 1; var p = state.draft.photos[i]; state.draft.photos[i] = state.draft.photos[k]; state.draft.photos[k] = p; markDirty(); renderPhotos(); }
+      else if (act === 'rev-new') { state.reviews.push({ author: '', origin: '', source: '', date: '', rating: 5, home: '', text: { en: '', es: '' } }); markDirty(); render(); }
+      else if (act === 'rev-del') { state.reviews.splice(i, 1); markDirty(); render(); }
+    } catch (x) {
+      if (x && x.name === 'AbortError') return;
+      console.error(x); toast(x.message || String(x), true);
+    }
+  });
+
+  document.addEventListener('input', function (ev) {
+    var el = ev.target;
+    if (el.dataset.f && state.draft) {
+      var v = el.hasAttribute('data-num') ? (el.value === '' ? 0 : Number(el.value)) : el.value;
+      setPath(state.draft, el.dataset.f, v); markDirty();
+      if (state.errors[el.dataset.f]) { delete state.errors[el.dataset.f]; var msg = el.parentNode.querySelector('.err'); if (msg) msg.remove(); }
+      if (el.dataset.f === 'name' && state.editing === -1) { var sp = $('#slug-preview'); if (sp) sp.value = 'properties_' + (L.slugify(el.value) || '…') + '.html'; }
+    } else if (el.dataset.am && state.draft) {
+      var a = state.draft.amenities, at = a.indexOf(el.dataset.am);
+      if (el.checked && at < 0) a.push(el.dataset.am); if (!el.checked && at >= 0) a.splice(at, 1);
+      markDirty();
+    } else if (el.dataset.s) { state.site[el.dataset.s] = el.value.trim(); markDirty(); }
+    else if (el.dataset.r) { var box = el.closest('[data-rev]'); var r = state.reviews[+box.dataset.rev]; setPath(r, el.dataset.r, el.dataset.r === 'rating' ? Number(el.value) : el.value); markDirty(); }
+    else if (el.id === 'extra-en' || el.id === 'extra-es') markDirty();
+  });
+  document.addEventListener('change', function (ev) { if (ev.target.id === 'pick-photos') { addPhotos(ev.target.files); ev.target.value = ''; } });
+  document.addEventListener('dragover', function (ev) { var d = $('#drop'); if (d) { ev.preventDefault(); d.classList.add('is-over'); } });
+  document.addEventListener('dragleave', function () { var d = $('#drop'); if (d) d.classList.remove('is-over'); });
+  document.addEventListener('drop', function (ev) { var d = $('#drop'); if (!d) return; ev.preventDefault(); d.classList.remove('is-over'); if (ev.dataTransfer && ev.dataTransfer.files) addPhotos(ev.dataTransfer.files); });
+
+  document.addEventListener('submit', async function (ev) {
+    if (ev.target.id !== 'editor') return;
+    ev.preventDefault();
+    state.errors = validateDraft();
+    if (Object.keys(state.errors).length) { renderEditor(); var first = $('.err'); if (first) first.scrollIntoView({ block: 'center' }); return; }
+    commitDraft();
+    state.draft = null; state.editing = null; state.dirty = true;
+    await saveAll();
+  });
+  $('#save-all').addEventListener('click', function () {
+    if (state.draft) { var form = $('#editor'); if (form) { form.requestSubmit(); return; } }
+    saveAll();
+  });
+  window.addEventListener('beforeunload', function (ev) { if (state.dirty) { ev.preventDefault(); ev.returnValue = ''; } });
+
+  window.DomiaAdmin = { state: state, connect: connect, saveAll: saveAll };
+  render();
+})();
+</script>
+</body>
+</html>

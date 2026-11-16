@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /build/
+Disallow: /content/
+Disallow: /assets/originals/
+
+Sitemap: https://domiastays.es/sitemap.xml

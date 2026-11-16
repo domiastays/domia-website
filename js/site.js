@@ -1,0 +1,236 @@
+/* Domia Stays — site behaviour. No libraries. Every block checks that its markup is on the page. */
+(function () {
+  'use strict';
+  var doc = document, root = doc.documentElement;
+  root.classList.add('js');
+  function $(sel, ctx) { return (ctx || doc).querySelector(sel); }
+  function $$(sel, ctx) { return [].slice.call((ctx || doc).querySelectorAll(sel)); }
+  function throttle(fn) { var busy = false; return function () { if (busy) return; busy = true; requestAnimationFrame(function () { busy = false; fn(); }); }; }
+  var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Every message link the forms build goes through here (WhatsApp in a new tab, email in the same one).
+  function openUrl(url, newTab) {
+    doc.dispatchEvent(new CustomEvent('domia:open', { detail: { url: url } }));
+    if (newTab) window.open(url, '_blank', 'noopener'); else location.href = url;
+  }
+
+  /* ----- phone menu ----- */
+  var menuBtn = $('.menu-btn'), menu = $('#menu');
+  if (menuBtn && menu) {
+    var setMenu = function (open) {
+      menu.hidden = !open;
+      menuBtn.setAttribute('aria-expanded', String(open));
+      doc.body.style.overflow = open ? 'hidden' : '';
+    };
+    menuBtn.addEventListener('click', function () { setMenu(menu.hidden); });
+    menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+    doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) { setMenu(false); menuBtn.focus(); } });
+    addEventListener('resize', throttle(function () { if (innerWidth >= 1040 && !menu.hidden) setMenu(false); }));
+  }
+
+  /* ----- hero video: starts after the page has loaded, never on data-saver or reduced motion ----- */
+  var video = $('.hero__window video');
+  if (video && !reduceMotion && !(navigator.connection && navigator.connection.saveData)) {
+    var startVideo = function () {
+      video.src = innerWidth < 700 ? video.dataset.srcSm : video.dataset.src;
+      video.addEventListener('playing', function () { video.classList.add('is-on'); }, { once: true });
+      var p = video.play();
+      if (p && p.catch) p.catch(function () {});
+    };
+    if (doc.readyState === 'complete') setTimeout(startVideo, 200);
+    else addEventListener('load', function () { setTimeout(startVideo, 200); });
+  }
+
+  /* ----- WhatsApp button: appears once you scroll ----- */
+  var fab = $('.fab');
+  if (fab) {
+    var onScroll = throttle(function () { fab.classList.toggle('is-on', scrollY > 480); });
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  /* ----- the collection: filters and sorting ----- */
+  var filters = $('[data-filters]'), cardList = $('[data-cards]');
+  if (filters && cardList) {
+    var cards = $$('.card', cardList), emptyBox = $('[data-empty]'), countEl = $('[data-count]', filters);
+    var keys = ['area', 'guests', 'beds', 'sort'];
+    var params = new URLSearchParams(location.search);
+    keys.forEach(function (k) {
+      var el = filters.elements[k], v = params.get(k);
+      if (!el || !v) return;
+      el.value = v;
+      if (el.value !== v) el.value = '';
+    });
+    var applyFilters = function (updateUrl) {
+      var area = filters.elements.area.value, guests = +filters.elements.guests.value || 0,
+          beds = +filters.elements.beds.value || 0, sort = filters.elements.sort.value, shown = 0;
+      cards.forEach(function (c) {
+        var ok = (!area || c.dataset.area === area) && +c.dataset.guests >= guests && +c.dataset.beds >= beds;
+        c.hidden = !ok;
+        if (ok) shown++;
+      });
+      cards.slice().sort(function (a, b) {
+        if (sort === 'low') return a.dataset.price - b.dataset.price;
+        if (sort === 'high') return b.dataset.price - a.dataset.price;
+        return a.dataset.order - b.dataset.order;
+      }).forEach(function (c) { cardList.appendChild(c); });
+      countEl.textContent = shown === 1 ? countEl.dataset.one : countEl.dataset.many.replace('{n}', shown);
+      if (emptyBox) emptyBox.hidden = shown > 0;
+      cardList.hidden = shown === 0;
+      if (updateUrl) {
+        var q = new URLSearchParams();
+        keys.forEach(function (k) { if (filters.elements[k].value) q.set(k, filters.elements[k].value); });
+        var qs = q.toString();
+        try { history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '')); } catch (e) { /* file:// */ }
+      }
+    };
+    filters.addEventListener('change', function () { applyFilters(true); });
+    filters.addEventListener('submit', function (e) { e.preventDefault(); });
+    var clearBtn = $('[data-clear]');
+    if (clearBtn) clearBtn.addEventListener('click', function () { filters.reset(); applyFilters(true); });
+    applyFilters(false);
+  }
+
+  /* ----- one home: photo strip counter and full-screen viewer ----- */
+  var gal = $('[data-gallery]'), lb = $('[data-lightbox]');
+  if (gal && lb) {
+    var items = $$('.gal__item', gal), lbImg = $('[data-lb-img]', lb), lbCap = $('[data-lb-cap]', lb), lbN = $('[data-lb-n]', lb), at = 0;
+    var show = function (k) {
+      at = (k + items.length) % items.length;
+      var a = items[at];
+      lbImg.src = a.href;
+      lbImg.alt = a.dataset.alt || '';
+      lbCap.textContent = a.dataset.alt || '';
+      lbN.textContent = (at + 1) + ' / ' + items.length;
+      if (items.length > 1) { var pre = new Image(); pre.src = items[(at + 1) % items.length].href; }
+    };
+    var openAt = function (k) {
+      show(k);
+      if (lb.showModal) lb.showModal(); else lb.setAttribute('open', '');
+    };
+    var closeLb = function () { if (lb.close) lb.close(); else lb.removeAttribute('open'); };
+    items.forEach(function (a, k) { a.addEventListener('click', function (e) { e.preventDefault(); openAt(k); }); });
+    var allBtn = $('[data-gal-open]', gal);
+    if (allBtn) allBtn.addEventListener('click', function () { openAt(0); });
+    $('[data-lb-close]', lb).addEventListener('click', closeLb);
+    var prevBtn = $('[data-lb-prev]', lb), nextBtn = $('[data-lb-next]', lb);
+    prevBtn.addEventListener('click', function () { show(at - 1); });
+    nextBtn.addEventListener('click', function () { show(at + 1); });
+    if (items.length < 2) { prevBtn.hidden = true; nextBtn.hidden = true; }
+    lb.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') show(at - 1);
+      if (e.key === 'ArrowRight') show(at + 1);
+    });
+    lb.addEventListener('click', function (e) { if (e.target === lb || e.target.classList.contains('lb__fig')) closeLb(); });
+    var touchX = null;
+    lb.addEventListener('touchstart', function (e) { touchX = e.changedTouches[0].clientX; }, { passive: true });
+    lb.addEventListener('touchend', function (e) {
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX; touchX = null;
+      if (Math.abs(dx) > 48) show(at + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+    var track = $('[data-gal-track]', gal), counter = $('[data-gal-i]', gal);
+    if (track && counter) {
+      track.addEventListener('scroll', throttle(function () {
+        var step = items[0].offsetWidth + 8;
+        counter.textContent = Math.max(1, Math.min(items.length, Math.round(track.scrollLeft / step) + 1));
+      }), { passive: true });
+    }
+  }
+
+  /* ----- one home: enquiry card -> WhatsApp message ----- */
+  var enq = $('[data-enquiry]');
+  if (enq) {
+    var dIn = enq.elements['in'], dOut = enq.elements.out, errEl = $('[data-err]', enq);
+    var iso = function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
+    var today = new Date();
+    dIn.min = iso(today); dOut.min = iso(today);
+    dIn.addEventListener('change', function () {
+      if (!dIn.value) return;
+      var next = new Date(dIn.value + 'T00:00:00'); next.setDate(next.getDate() + 1);
+      dOut.min = iso(next);
+      if (dOut.value && dOut.value <= dIn.value) dOut.value = '';
+    });
+    enq.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errEl.hidden = true;
+      var d = enq.dataset, parts = [d.msg];
+      if (dIn.value && dOut.value) {
+        if (dOut.value <= dIn.value) { errEl.textContent = d.error; errEl.hidden = false; dOut.focus(); return; }
+        var nice = function (v) { return new Date(v + 'T00:00:00').toLocaleDateString(d.locale, { day: 'numeric', month: 'short', year: 'numeric' }); };
+        parts.push(d.msgDates.replace('{in}', nice(dIn.value)).replace('{out}', nice(dOut.value)));
+      }
+      parts.push(d.msgGuests.replace('{n}', enq.elements.guests.value));
+      parts.push(d.msgEnd);
+      openUrl(d.wa + '?text=' + encodeURIComponent(parts.join(' ')), true);
+    });
+  }
+
+  /* ----- sticky bar on phones: hides while the same call to action is already on screen ----- */
+  var bar = $('[data-bar]');
+  if (bar && 'IntersectionObserver' in window) {
+    var onScreen = [];
+    var barWatch = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var at = onScreen.indexOf(en.target);
+        if (en.isIntersecting && at < 0) onScreen.push(en.target);
+        if (!en.isIntersecting && at >= 0) onScreen.splice(at, 1);
+      });
+      bar.classList.toggle('is-off', onScreen.length > 0);
+    }, { threshold: 0.2 });
+    $$(bar.dataset.watch || '#enquire').forEach(function (el) { barWatch.observe(el); });
+  }
+
+  /* ----- contact form -> WhatsApp or email ----- */
+  var contact = $('[data-contact]');
+  if (contact) {
+    contact.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var d = contact.dataset, f = contact.elements, lines = [d.intro];
+      [[d.lName, f.name.value], [d.lDates, f.dates.value], [d.lGuests, f.guests.value], [d.lLooking, f.message.value]].forEach(function (row) {
+        if (String(row[1]).trim()) lines.push(row[0] + ': ' + String(row[1]).trim());
+      });
+      var body = lines.join('\n');
+      var byEmail = e.submitter && e.submitter.dataset.send === 'email';
+      if (byEmail) openUrl('mailto:' + d.email + '?subject=' + encodeURIComponent(d.subject) + '&body=' + encodeURIComponent(body), false);
+      else openUrl(d.wa + '?text=' + encodeURIComponent(body), true);
+    });
+  }
+
+  /* ----- owner earnings calculator ----- */
+  var calc = $('[data-calc]');
+  if (calc) {
+    var priceIn = $('[data-in=price]', calc), nightsIn = $('[data-in=nights]', calc), rateIn = $('[data-in=rate]', calc), radios = $$('input[name=channel]', calc);
+    var euro = function (n) { return '€' + Math.round(n).toLocaleString('en-US'); };
+    var minus = function (n) { return Math.round(n) === 0 ? '€0' : '−' + euro(n); };
+    var put = function (sel, text) { var el = $(sel, calc); if (el) el.textContent = text; };
+    var wide = function (sel, part) { var el = $(sel, calc); if (el) el.style.width = (Math.max(0, Math.min(1, part)) * 100).toFixed(1) + '%'; };
+    var pct = function (part) { return ' (' + Math.round(part * 100) + '%)'; };
+    var renderCalc = function () {
+      var ch = radios.filter(function (r) { return r.checked; })[0] || radios[0];
+      var fee = +ch.dataset.fee, price = +priceIn.value, feeAmt = price * fee / 100, net = price - feeAmt, domia = net * 0.2, you = net - domia;
+      put('[data-out=price]', euro(price));
+      put('[data-flow=price]', euro(price));
+      put('[data-flow=feeLabel]', calc.dataset.feeLabel.replace('{channel}', ch.dataset.name).replace('{pct}', fee));
+      put('[data-flow=fee]', minus(feeAmt));
+      put('[data-flow=net]', euro(net));
+      put('[data-flow=domia]', minus(domia));
+      put('[data-flow=you]', euro(you));
+      wide('[data-split=you]', you / price); wide('[data-split=domia]', domia / price); wide('[data-split=fee]', feeAmt / price);
+      put('[data-legend=you]', euro(you) + pct(you / price));
+      put('[data-legend=domia]', euro(domia) + pct(domia / price));
+      put('[data-legend=feeName]', ch.dataset.name);
+      put('[data-legend=fee]', euro(feeAmt) + pct(feeAmt / price));
+      radios.forEach(function (r, i) {
+        var v = (price - price * (+r.dataset.fee) / 100) * 0.8;
+        wide('[data-chbar="' + i + '"]', v / (price * 0.8));
+        put('[data-chval="' + i + '"]', euro(v));
+      });
+      put('[data-out=nights]', nightsIn.value);
+      put('[data-out=rate]', euro(+rateIn.value));
+      put('[data-out=annual]', euro(nightsIn.value * rateIn.value * 12 * (1 - fee / 100) * 0.8));
+    };
+    calc.addEventListener('input', renderCalc);
+    calc.addEventListener('change', renderCalc);
+    renderCalc();
+  }
+})();
