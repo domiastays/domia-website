@@ -13,6 +13,18 @@
     if (newTab) window.open(url, '_blank', 'noopener'); else location.href = url;
   }
 
+  /* ----- header state and the thin progress line at the top ----- */
+  var hdr = $('.hdr'), progress = doc.createElement('div');
+  progress.className = 'progress'; progress.setAttribute('aria-hidden', 'true'); doc.body.appendChild(progress);
+  var onPageScroll = throttle(function () {
+    var y = window.scrollY, max = root.scrollHeight - innerHeight, m = $('#menu');
+    if (hdr) { hdr.classList.toggle('is-scrolled', y > 24); hdr.classList.toggle('is-solid', y > 24 || (m && !m.hidden)); }
+    progress.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, y / max) : 0).toFixed(4) + ')';
+  });
+  addEventListener('scroll', onPageScroll, { passive: true });
+  addEventListener('resize', onPageScroll);
+  onPageScroll();
+
   /* ----- phone menu ----- */
   var menuBtn = $('.menu-btn'), menu = $('#menu');
   if (menuBtn && menu) {
@@ -20,6 +32,7 @@
       menu.hidden = !open;
       menuBtn.setAttribute('aria-expanded', String(open));
       doc.body.style.overflow = open ? 'hidden' : '';
+      onPageScroll();
     };
     menuBtn.addEventListener('click', function () { setMenu(menu.hidden); });
     menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
@@ -28,7 +41,7 @@
   }
 
   /* ----- hero video: starts after the page has loaded, never on data-saver or reduced motion ----- */
-  var video = $('.hero__window video');
+  var video = $('[data-hero-video]');
   if (video && !reduceMotion && !(navigator.connection && navigator.connection.saveData)) {
     var startVideo = function () {
       video.src = innerWidth < 700 ? video.dataset.srcSm : video.dataset.src;
@@ -38,6 +51,59 @@
     };
     if (doc.readyState === 'complete') setTimeout(startVideo, 200);
     else addEventListener('load', function () { setTimeout(startVideo, 200); });
+  }
+
+  /* ----- things ease in as they come on screen ----- */
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var revealSel = '.sechead, .split__head, .split__body > *, .cards .card, .deflist > div, .stats > div, .dfig, .owners-teaser__in > div, .ohero__in > div, .closing__in > *, .intro__media, .intro__text > *, .band__in > *, .ghero__in > *, .phead .wrap > *, .area, .pics li, .cmp__col, .svc__group, .story > *, .ways li, .form, .review, .filters, .calc__panel, .hgrid__main > *, .earn__up, .chips li, .faq details';
+    var revealIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting || en.boundingClientRect.bottom < 0) { en.target.classList.add('is-in'); revealIo.unobserve(en.target); }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
+    $$(revealSel).forEach(function (el) {
+      var n = 0, sib = el.previousElementSibling;
+      while (sib && n < 6) { n++; sib = sib.previousElementSibling; }
+      el.style.setProperty('--rv-d', (n * 0.07).toFixed(2) + 's');
+      el.classList.add('rv');
+      revealIo.observe(el);
+    });
+  }
+
+  /* ----- numbers count up the first time they are seen ----- */
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var countIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        countIo.unobserve(en.target);
+        var el = en.target, m = /^(\D*?)(\d+)(\D*)$/.exec(el.textContent.trim());
+        if (!m) return;
+        var end = +m[2], t0 = null, dur = 1400;
+        var step = function (t) {
+          if (t0 === null) t0 = t;
+          var p = Math.min(1, (t - t0) / dur), eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = m[1] + Math.round(end * eased) + m[3];
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    }, { threshold: 0.6 });
+    $$('[data-count]').forEach(function (el) { countIo.observe(el); });
+  }
+
+  /* ----- large photos drift slightly as the page scrolls ----- */
+  var drifting = $$('[data-parallax]').map(function (sec) { return { sec: sec, img: $('img', sec) }; });
+  if (drifting.length && !reduceMotion) {
+    var drift = throttle(function () {
+      drifting.forEach(function (d) {
+        var r = d.sec.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) return;
+        var p = (r.top + r.height / 2 - innerHeight / 2) / (innerHeight / 2 + r.height / 2);
+        d.img.style.transform = 'translate3d(0,' + (p * -0.08 * r.height).toFixed(1) + 'px,0)';
+      });
+    });
+    addEventListener('scroll', drift, { passive: true });
+    drift();
   }
 
   /* ----- WhatsApp button: appears once you scroll ----- */

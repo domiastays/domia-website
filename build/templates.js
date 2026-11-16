@@ -7,7 +7,7 @@
   var L = g.DomiaLib, esc = L.esc, tx = L.tx, icon = L.icon, fill = L.fill, money = L.money;
 
   // Bump when css/site.css or js/site.js change, so browsers fetch the new files.
-  var ASSET_VERSION = '20261116';
+  var ASSET_VERSION = '20261116b';
 
   // Site photography in assets/img (name: [width, height] of the large file).
   var IMG = {
@@ -74,7 +74,9 @@
     s += '<link rel="icon" href="assets/brand/monogram-tile.svg" type="image/svg+xml">\n<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">\n';
     s += '<link rel="preload" href="assets/fonts/cormorant-garamond-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>\n';
     s += '<link rel="preload" href="assets/fonts/dm-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>\n';
-    if (o.preloadImage) s += '<link rel="preload" as="image" href="' + esc(o.preloadImage.src) + '"' + (o.preloadImage.srcset ? ' imagesrcset="' + esc(o.preloadImage.srcset) + '" imagesizes="' + esc(o.preloadImage.sizes) + '"' : '') + '>\n';
+    (o.preloads || (o.preloadImage ? [o.preloadImage] : [])).forEach(function (pl) {
+      s += '<link rel="preload" as="image" href="' + esc(pl.src) + '"' + (pl.srcset ? ' imagesrcset="' + esc(pl.srcset) + '" imagesizes="' + esc(pl.sizes) + '"' : '') + (pl.media ? ' media="' + esc(pl.media) + '"' : '') + '>\n';
+    });
     s += '<link rel="stylesheet" href="css/site.css?v=' + ASSET_VERSION + '">\n';
     (o.jsonld || []).forEach(function (j) { s += '<script type="application/ld+json">' + JSON.stringify(j).replace(/</g, '\\u003c') + '</script>\n'; });
     s += '</head>\n';
@@ -190,45 +192,70 @@
 
   function home(ctx) {
     var t = ctx.t, h = t.home, site = ctx.site, homes = ctx.homes, s = '';
+    var cine = site.heroStyle !== 'window';
     var featured = homes.filter(function (x) { return x.featured; }).slice(0, 6);
     if (!featured.length) featured = homes.slice(0, 6);
     var areas = ctx.areas, maxGuests = 0, maxBeds = 0;
     homes.forEach(function (x) { maxGuests = Math.max(maxGuests, x.guests); maxBeds = Math.max(maxBeds, x.bedrooms); });
 
-    s += '<section class="hero navy' + (homes.length ? '' : ' hero--plain') + '">\n<div class="wrap hero__in">\n';
-    s += '<div class="hero__copy">\n<h1 class="hero__title">' + esc(h.h1) + '</h1>\n<p class="lead">' + esc(h.lead) + '</p>\n';
-    s += '<p class="btns"><a class="btn btn--gold" href="' + ctx.href('properties') + '">' + esc(h.browse) + '</a><a class="btn btn--ghost" href="' + wa(ctx, t.wa.general) + '" target="_blank" rel="noopener">' + icon('whatsapp') + esc(t.wa.cta) + '</a></p>\n</div>\n';
-    s += '<div class="hero__window">\n<img src="assets/video/benidorm-bay-poster.jpg" srcset="assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w" sizes="(min-width: 900px) 48vw, 100vw" width="1200" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high">\n';
-    s += '<video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-bay.mp4" data-src-sm="assets/video/benidorm-bay-sm.mp4"></video>\n</div>\n</div>\n';
+    var buttons = '<p class="btns"><a class="btn btn--gold" href="' + ctx.href('properties') + '">' + esc(h.browse) + '</a><a class="btn btn--ghost" href="' + wa(ctx, t.wa.general) + '" target="_blank" rel="noopener">' + icon('whatsapp') + esc(t.wa.cta) + '</a></p>\n';
+
+    var finder = '';
     if (homes.length) {
-      s += '<div class="wrap">\n<form class="finder" action="' + ctx.href('properties') + '" method="get" aria-label="' + esc(h.finder.title) + '">\n';
-      s += '<label class="finder__f"><span>' + esc(h.finder.area) + '</span><select name="area"><option value="">' + esc(h.finder.anyArea) + '</option>' + areas.map(function (a) { return '<option>' + esc(a) + '</option>'; }).join('') + '</select></label>\n';
-      s += '<label class="finder__f"><span>' + esc(h.finder.guests) + '</span><select name="guests"><option value="">' + esc(h.finder.anyGuests) + '</option>';
-      for (var gN = 2; gN <= maxGuests; gN += 2) s += '<option value="' + gN + '">' + esc(fill(h.finder.guestsN, { n: gN })) + '</option>';
-      s += '</select></label>\n<label class="finder__f"><span>' + esc(h.finder.beds) + '</span><select name="beds"><option value="">' + esc(h.finder.anyBeds) + '</option>';
-      for (var bN = 1; bN <= maxBeds; bN++) s += '<option value="' + bN + '">' + esc(fill(h.finder.bedsN, { n: bN })) + '</option>';
-      s += '</select></label>\n<button class="btn btn--navy" type="submit">' + esc(h.finder.go) + '</button>\n</form>\n</div>\n';
-    }
-    s += '</section>\n';
-
-    if (featured.length) {
-      s += '<section class="sec sec--homes">\n<div class="wrap">\n<div class="sechead"><h2 class="h2">' + esc(h.homesTitle) + '</h2><a class="tlink" href="' + ctx.href('properties') + '">' + esc(fill(h.homesAll, { n: homes.length })) + icon('arrow') + '</a></div>\n';
-      s += '<ul class="cards cards--rail">' + featured.map(function (x, i) { return card(ctx, x, { index: i, eager: false }); }).join('') + '</ul>\n</div>\n</section>\n';
+      finder += '<div class="wrap">\n<form class="finder" action="' + ctx.href('properties') + '" method="get" aria-label="' + esc(h.finder.title) + '">\n';
+      finder += '<label class="finder__f"><span>' + esc(h.finder.area) + '</span><select name="area"><option value="">' + esc(h.finder.anyArea) + '</option>' + areas.map(function (a) { return '<option>' + esc(a) + '</option>'; }).join('') + '</select></label>\n';
+      finder += '<label class="finder__f"><span>' + esc(h.finder.guests) + '</span><select name="guests"><option value="">' + esc(h.finder.anyGuests) + '</option>';
+      for (var gN = 2; gN <= maxGuests; gN += 2) finder += '<option value="' + gN + '">' + esc(fill(h.finder.guestsN, { n: gN })) + '</option>';
+      finder += '</select></label>\n<label class="finder__f"><span>' + esc(h.finder.beds) + '</span><select name="beds"><option value="">' + esc(h.finder.anyBeds) + '</option>';
+      for (var bN = 1; bN <= maxBeds; bN++) finder += '<option value="' + bN + '">' + esc(fill(h.finder.bedsN, { n: bN })) + '</option>';
+      finder += '</select></label>\n<button class="btn btn--navy" type="submit">' + esc(h.finder.go) + '</button>\n</form>\n</div>\n';
     }
 
-    s += '<section class="sec' + (featured.length ? ' sec--line' : '') + '">\n<div class="wrap split">\n<div class="split__head"><h2 class="h2">' + esc(h.includesTitle) + '</h2><a class="tlink" href="' + ctx.href('guest-info') + '">' + esc(h.includesMore) + icon('arrow') + '</a></div>\n';
-    s += '<dl class="deflist split__body">' + h.includes.map(function (it) {
+    var includesList = '<dl class="deflist">' + h.includes.map(function (it) {
       return '<div><dt>' + esc(it[0]) + '</dt><dd>' + esc(fill(it[1], { from: site.checkInFrom, until: site.checkInUntil })) + '</dd></div>';
-    }).join('') + '</dl>\n</div>\n</section>\n';
+    }).join('') + '</dl>';
+    var guestLink = '<a class="tlink" href="' + ctx.href('guest-info') + '">' + esc(h.includesMore) + icon('arrow') + '</a>';
 
-    s += '<section class="band">\n' + siteImg('benidorm-dusk', h.benidormAlt, '100vw', { cls: 'band__img' }) + '\n<div class="band__shade"></div>\n<div class="wrap band__in">\n<h2 class="h2">' + esc(h.benidormTitle) + '</h2>\n<p class="lead">' + esc(h.benidormText) + '</p>\n<a class="btn btn--gold" href="' + ctx.href('benidorm') + '">' + esc(h.benidormLink) + '</a>\n</div>\n</section>\n';
-    s += '<section class="sec sec--stats">\n<div class="wrap">\n<dl class="stats">' + h.stats.map(function (st) { return '<div><dt>' + esc(st[0]) + '</dt><dd>' + esc(st[1]) + '</dd></div>'; }).join('') + '</dl>\n</div>\n</section>\n';
-
+    var homesSec = '';
+    if (featured.length) {
+      homesSec += '<section class="sec sec--homes">\n<div class="wrap">\n<div class="sechead"><h2 class="h2">' + esc(h.homesTitle) + '</h2><a class="tlink" href="' + ctx.href('properties') + '">' + esc(fill(h.homesAll, { n: homes.length })) + icon('arrow') + '</a></div>\n';
+      homesSec += '<ul class="cards cards--rail">' + featured.map(function (x, i) { return card(ctx, x, { index: i, eager: false }); }).join('') + '</ul>\n</div>\n</section>\n';
+    }
+    var statsSec = '<section class="sec sec--stats">\n<div class="wrap">\n<dl class="stats">' + h.stats.map(function (st) { return '<div><dt data-count>' + esc(st[0]) + '</dt><dd>' + esc(st[1]) + '</dd></div>'; }).join('') + '</dl>\n</div>\n</section>\n';
     var reviews = ctx.reviews.slice(0, 3);
-    if (reviews.length) s += '<section class="sec sec--line">\n<div class="wrap">\n<div class="sechead"><h2 class="h2">' + esc(h.reviewsTitle) + '</h2></div>\n' + reviewList(ctx, reviews) + '\n</div>\n</section>\n';
+    var reviewsSec = reviews.length ? '<section class="sec sec--line">\n<div class="wrap">\n<div class="sechead"><h2 class="h2">' + esc(h.reviewsTitle) + '</h2></div>\n' + reviewList(ctx, reviews) + '\n</div>\n</section>\n' : '';
+    var ownersSec = '<section class="sec navy owners-teaser">\n<div class="wrap owners-teaser__in">\n<div>\n<h2 class="h2">' + esc(h.ownersTitle) + '</h2>\n<p class="lead">' + esc(h.ownersText) + '</p>\n<p class="btns"><a class="btn btn--gold" href="' + ctx.href('owners') + '">' + esc(h.ownersCta) + '</a><a class="btn btn--ghost" href="' + ctx.href('owner-calculator') + '">' + esc(h.ownersCalc) + '</a></p>\n</div>\n' +
+      '<p class="dfig"><b data-count>' + esc(h.ownersFigure) + '</b><span>' + esc(h.ownersFigureLabel) + '</span></p>\n</div>\n</section>\n';
 
-    s += '<section class="sec navy owners-teaser">\n<div class="wrap owners-teaser__in">\n<div>\n<h2 class="h2">' + esc(h.ownersTitle) + '</h2>\n<p class="lead">' + esc(h.ownersText) + '</p>\n<p class="btns"><a class="btn btn--gold" href="' + ctx.href('owners') + '">' + esc(h.ownersCta) + '</a><a class="btn btn--ghost" href="' + ctx.href('owner-calculator') + '">' + esc(h.ownersCalc) + '</a></p>\n</div>\n';
-    s += '<p class="dfig"><b>' + esc(h.ownersFigure) + '</b><span>' + esc(h.ownersFigureLabel) + '</span></p>\n</div>\n</section>\n';
+    var preloads;
+    if (cine) {
+      // Full-screen video hero with the finder docked to it, then a moving strip of place names.
+      s += '<section class="cine navy">\n<div class="cine__stage">\n';
+      s += '<picture class="cine__media"><source media="(max-width: 700px)" srcset="assets/video/benidorm-tall-poster.jpg"><img src="assets/video/benidorm-wide-poster.jpg" width="1600" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high"></picture>\n';
+      s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-wide.mp4" data-src-sm="assets/video/benidorm-tall.mp4"></video>\n<div class="cine__shade"></div>\n';
+      s += '<div class="wrap cine__in">\n<p class="cine__eyebrow">' + esc(h.cine.eyebrow) + '</p>\n<h1 class="cine__title"><span class="ln"><span>' + esc(h.cine.line1) + '</span></span> <span class="ln"><em class="shim">' + esc(h.cine.line2) + '</em></span></h1>\n<p class="lead">' + esc(h.cine.lead) + '</p>\n' + buttons + '</div>\n';
+      s += '<span class="cine__cue" aria-hidden="true">' + esc(h.cine.scroll) + '</span>\n</div>\n' + finder;
+      var words = [site.tagline, 'Benidorm', 'Costa Blanca'].concat(areas);
+      var strip = words.map(function (w) { return '<span>' + esc(w) + '</span><i>◆</i>'; }).join('');
+      s += '<div class="marquee" aria-hidden="true"><div class="marquee__track">' + strip + strip + '</div></div>\n</section>\n';
+      s += homesSec;
+      s += '<section class="sec intro">\n<div class="wrap intro__in">\n<div class="intro__media">' + siteImg('bay-from-hills', h.cine.introAlt, '(min-width: 900px) 36vw, 80vw') + '</div>\n';
+      s += '<div class="intro__text"><h2 class="h2">' + esc(h.cine.introTitle) + '</h2>\n<p class="lead">' + esc(h.cine.introText) + '</p>\n' + includesList + '\n' + guestLink + '</div>\n</div>\n</section>\n';
+      s += '<section class="band band--tall" data-parallax>\n' + siteImg('benidorm-dusk', h.benidormAlt, '100vw', { cls: 'band__img' }) + '\n<div class="band__shade"></div>\n<div class="wrap band__in">\n<p class="band__quote" lang="en">“' + esc(site.tagline) + '”</p>\n<h2 class="h2">' + esc(h.benidormTitle) + '</h2>\n<p class="lead">' + esc(h.benidormText) + '</p>\n<a class="btn btn--gold" href="' + ctx.href('benidorm') + '">' + esc(h.benidormLink) + '</a>\n</div>\n</section>\n';
+      s += statsSec + reviewsSec + ownersSec;
+      preloads = [{ src: 'assets/video/benidorm-wide-poster.jpg', media: '(min-width: 701px)' }, { src: 'assets/video/benidorm-tall-poster.jpg', media: '(max-width: 700px)' }];
+    } else {
+      // Quieter version: the video sits in a D-shaped window beside the headline.
+      s += '<section class="hero navy' + (homes.length ? '' : ' hero--plain') + '">\n<div class="wrap hero__in">\n';
+      s += '<div class="hero__copy">\n<h1 class="hero__title">' + esc(h.h1) + '</h1>\n<p class="lead">' + esc(h.lead) + '</p>\n' + buttons + '</div>\n';
+      s += '<div class="hero__window">\n<img src="assets/video/benidorm-bay-poster.jpg" srcset="assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w" sizes="(min-width: 900px) 48vw, 100vw" width="1200" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high">\n';
+      s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-bay.mp4" data-src-sm="assets/video/benidorm-bay-sm.mp4"></video>\n</div>\n</div>\n' + finder + '</section>\n';
+      s += homesSec;
+      s += '<section class="sec' + (featured.length ? ' sec--line' : '') + '">\n<div class="wrap split">\n<div class="split__head"><h2 class="h2">' + esc(h.includesTitle) + '</h2>' + guestLink + '</div>\n' + includesList.replace('class="deflist"', 'class="deflist split__body"') + '\n</div>\n</section>\n';
+      s += '<section class="band" data-parallax>\n' + siteImg('benidorm-dusk', h.benidormAlt, '100vw', { cls: 'band__img' }) + '\n<div class="band__shade"></div>\n<div class="wrap band__in">\n<h2 class="h2">' + esc(h.benidormTitle) + '</h2>\n<p class="lead">' + esc(h.benidormText) + '</p>\n<a class="btn btn--gold" href="' + ctx.href('benidorm') + '">' + esc(h.benidormLink) + '</a>\n</div>\n</section>\n';
+      s += statsSec + reviewsSec + ownersSec;
+      preloads = [{ src: 'assets/video/benidorm-bay-poster.jpg', srcset: 'assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w', sizes: '(min-width: 900px) 48vw, 100vw' }];
+    }
 
     s += closing(ctx);
 
@@ -239,8 +266,7 @@
       address: { '@type': 'PostalAddress', addressLocality: site.locality, postalCode: site.postalCode, addressRegion: site.region, addressCountry: site.country }
     }];
     if (site.url) { ld[0].url = L.abs(site, 'index.html'); ld[0].image = L.abs(site, 'assets/brand/og-cover.jpg'); ld[0].logo = L.abs(site, 'assets/brand/icon-512.png'); }
-    return page(ctx, { title: h.title, desc: h.desc, bodyClass: 'p-home', jsonld: ld,
-      preloadImage: { src: 'assets/video/benidorm-bay-poster.jpg', srcset: 'assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w', sizes: '(min-width: 900px) 48vw, 100vw' } }, s);
+    return page(ctx, { title: h.title, desc: h.desc, bodyClass: 'p-home' + (cine ? ' p-home--cine' : ''), jsonld: ld, preloads: preloads }, s);
   }
 
   /* ---------- the collection ---------- */
@@ -391,7 +417,7 @@
   function owners(ctx) {
     var t = ctx.t, o = t.owners, s = '';
     s += '<section class="ohero navy">\n<div class="wrap ohero__in">\n<div>\n<h1 class="h1">' + esc(o.h1) + '</h1>\n<p class="lead">' + esc(o.lead) + '</p>\n<p class="btns"><a class="btn btn--gold" href="' + wa(ctx, t.wa.evaluation) + '" target="_blank" rel="noopener">' + icon('whatsapp') + esc(o.cta) + '</a><a class="btn btn--ghost" href="' + ctx.href('owner-calculator') + '">' + esc(o.calc) + '</a></p>\n</div>\n';
-    s += '<p class="dfig"><b>' + esc(o.figure) + '</b><span>' + esc(o.figureLabel) + '</span><small>' + esc(o.figureNote) + '</small></p>\n</div>\n</section>\n';
+    s += '<p class="dfig"><b data-count>' + esc(o.figure) + '</b><span>' + esc(o.figureLabel) + '</span><small>' + esc(o.figureNote) + '</small></p>\n</div>\n</section>\n';
 
     s += '<section class="sec">\n<div class="wrap split">\n<div class="split__head"><h2 class="h2">' + esc(o.earnTitle) + '</h2></div>\n<div class="split__body">\n';
     s += '<div class="earn"><div class="earn__row"><p>' + esc(o.earnLong) + '</p><div class="earn__bar earn__bar--low"><span></span></div><p class="earn__val"><b>' + esc(o.earnLongVal) + '</b> ' + esc(o.perMonth) + '</p></div>';
@@ -467,7 +493,7 @@
 
   function benidorm(ctx) {
     var t = ctx.t, b = t.benidorm, s = '';
-    s += '<section class="ghero">\n' + siteImg('levante-balcon', b.heroAlt, '100vw', { cls: 'ghero__img', eager: true }) + '\n<div class="ghero__shade"></div>\n<div class="wrap ghero__in"><h1 class="h1">' + esc(b.h1) + '</h1><p class="lead">' + esc(b.lead) + '</p></div>\n</section>\n';
+    s += '<section class="ghero" data-parallax>\n' + siteImg('levante-balcon', b.heroAlt, '100vw', { cls: 'ghero__img', eager: true }) + '\n<div class="ghero__shade"></div>\n<div class="wrap ghero__in"><h1 class="h1">' + esc(b.h1) + '</h1><p class="lead">' + esc(b.lead) + '</p></div>\n</section>\n';
     function areaLink(a) {
       var count = ctx.homes.filter(function (x) { return x.area === a.key; }).length;
       if (!count) return '';

@@ -102,8 +102,8 @@ for (const file of pages.filter(f => f !== '404.html' && !f.endsWith('.es.html')
 
 // --- home page
 await D.goto(BASE + 'index.html', { waitUntil: 'load' });
-await D.waitForFunction(() => { const v = document.querySelector('.hero__window video'); return v && v.classList.contains('is-on') && !v.paused; }, null, { timeout: 12000 }).then(() => ok('home: the hero video starts playing', true)).catch(() => ok('home: the hero video starts playing', false));
-ok('home: desktop gets the larger video', (await D.evaluate(() => document.querySelector('.hero__window video').currentSrc)).endsWith('benidorm-bay.mp4'));
+await D.waitForFunction(() => { const v = document.querySelector('[data-hero-video]'); return v && v.classList.contains('is-on') && !v.paused; }, null, { timeout: 12000 }).then(() => ok('home: the hero video starts playing', true)).catch(() => ok('home: the hero video starts playing', false));
+ok('home: desktop gets the larger video', await D.evaluate(() => { const v = document.querySelector('[data-hero-video]'); return v.currentSrc.endsWith(v.dataset.src); }));
 ok('home: shows the featured homes', (await D.locator('.sec--homes .card').count()) === Math.min(6, data.filter(h => h.status !== 'hidden' && h.featured !== false).length));
 const waHrefs = await D.locator('a[href^="https://wa.me/"]').evaluateAll(a => a.map(x => x.href));
 ok('home: every WhatsApp link uses the right number and a ready message', waHrefs.length >= 4 && waHrefs.every(h => h.startsWith('https://wa.me/' + site.whatsapp + '?text=')), waHrefs.length + ' links');
@@ -235,10 +235,22 @@ ok('contact: phone, email and WhatsApp links are correct', (await D.getAttribute
 
 // --- owners
 await D.goto(BASE + 'owners.html', { waitUntil: 'load' });
+await D.waitForFunction(() => document.querySelector('.dfig').textContent.includes('20%'), null, { timeout: 5000 }).catch(() => {});
 ok('owners: states 20% of net revenue', (await D.textContent('.dfig')).includes('20%') && (await D.textContent('.dfig')).includes('of net revenue'));
 ok('owners: twelve services, six compliance items, five onboarding steps', (await D.locator('.svc dt').count()) === 12 && (await D.locator('.chips li').count()) === 6 && (await D.locator('.steps li').count()) === 5);
 await Promise.all([D.waitForNavigation(), D.click('.ohero a[href="owner-calculator.html"]')]);
 ok('owners: the calculator button opens the calculator', fileOf(D) === 'owner-calculator.html');
+// --- movement
+await D.goto(BASE + 'index.html', { waitUntil: 'load' }); await D.waitForTimeout(2600);
+ok('movement: the headline and buttons finish their entrance', await D.evaluate(() => [...document.querySelectorAll('.cine__in > *, .hero__copy > *')].every(e => getComputedStyle(e).opacity === '1')));
+ok('movement: content below the screen waits, then eases in when reached', await D.evaluate(async () => { const el = document.querySelector('.owners-teaser .dfig'); const before = el.classList.contains('is-in'); el.scrollIntoView({ block: 'center' }); await new Promise(r => setTimeout(r, 1500)); return !before && el.classList.contains('is-in') && getComputedStyle(el).opacity === '1'; }));
+ok('movement: numbers count up to their real value', await D.evaluate(async () => { await new Promise(r => setTimeout(r, 1800)); return document.querySelector('.owners-teaser [data-count]').textContent === '20%'; }));
+ok('movement: the progress line follows the scroll', await D.evaluate(async () => { window.scrollTo(0, document.documentElement.scrollHeight); await new Promise(r => setTimeout(r, 400)); return /scaleX\((1|0\.99)/.test(document.querySelector('.progress').style.transform); }));
+ok('movement: nothing is left invisible at the end of the page', await D.evaluate(async () => { for (let y = 0; y <= document.documentElement.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 80)); } await new Promise(r => setTimeout(r, 1600)); return [...document.querySelectorAll('.rv')].filter(e => !e.closest('[hidden]') && getComputedStyle(e).opacity !== '1').length; }) === 0);
+const R = await newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+await R.goto(BASE + 'index.html', { waitUntil: 'load' }); await R.waitForTimeout(600);
+ok('movement: with "reduce motion" switched on, everything is simply shown', await R.evaluate(() => document.querySelectorAll('.rv').length === 0 && !document.querySelector('[data-hero-video]').currentSrc && getComputedStyle(document.querySelector('.owners-teaser .dfig')).opacity === '1'));
+await R.context().close();
 await D.goto(BASE + '404.html', { waitUntil: 'load' });
 ok('missing-page screen offers a way back', (await D.locator('main a.btn').count()) === 2);
 ok('desktop run: no script errors or failed requests on any page', D.__errors.length === 0, [...new Set(D.__errors)].slice(0, 6).join(' | '));
@@ -255,8 +267,8 @@ await M.tap('.menu-btn');
 await Promise.all([M.waitForNavigation(), M.locator('.menu__nav a').nth(1).tap()]);
 ok('phone: a menu link opens its page', fileOf(M) === 'benidorm.html');
 await M.goto(BASE + 'index.html', { waitUntil: 'load' });
-await M.waitForFunction(() => { const v = document.querySelector('.hero__window video'); return v && v.currentSrc; }, null, { timeout: 8000 }).catch(() => {});
-ok('phone: gets the small video', (await M.evaluate(() => document.querySelector('.hero__window video').currentSrc)).endsWith('benidorm-bay-sm.mp4'));
+await M.waitForFunction(() => { const v = document.querySelector('[data-hero-video]'); return v && v.currentSrc; }, null, { timeout: 8000 }).catch(() => {});
+ok('phone: gets the small video', await M.evaluate(() => { const v = document.querySelector('[data-hero-video]'); return v.currentSrc.endsWith(v.dataset.srcSm); }));
 ok('phone: the home cards can be swiped sideways', await M.evaluate(() => { const r = document.querySelector('.cards--rail'); return r.scrollWidth > r.clientWidth + 100; }));
 await M.evaluate(() => window.scrollTo(0, 1500)); await M.waitForTimeout(500);
 ok('phone: the WhatsApp button appears after scrolling', await M.evaluate(() => document.querySelector('.fab').classList.contains('is-on')));

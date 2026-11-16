@@ -36,6 +36,15 @@
       h1: "Holiday homes in Benidorm, looked after by people who live here.",
       lead: "Every apartment is managed by our own team. The keys, the cleaning and the help on WhatsApp all come from the same people.",
       browse: "See the homes",
+      cine: {
+        eyebrow: "Holiday homes · Costa Blanca",
+        line1: "Your home on the", line2: "Benidorm bay",
+        lead: "Apartments looked after by people who live here. The keys, the cleaning and the help on WhatsApp all come from one local team.",
+        scroll: "Scroll",
+        introTitle: "Not a listings site. A curated collection.",
+        introText: "Domia Stays is a boutique rental agency in Benidorm. We look after a deliberately small number of homes, each one visited, styled and maintained by our own team, so when you arrive, everything simply works.",
+        introAlt: "Benidorm bay seen from the pine hills above Levante"
+      },
       videoLabel: "Benidorm seen from the water",
       finder: { title: "Find a home", area: "Area", anyArea: "Any area", guests: "Guests", anyGuests: "Any number", guestsN: "{n} or more", beds: "Bedrooms", anyBeds: "Any", bedsN: "{n} or more", go: "Show homes" },
       homesTitle: "The homes",
@@ -325,6 +334,15 @@
       h1: "Alojamientos en Benidorm, cuidados por gente que vive aquí.",
       lead: "Cada apartamento lo gestiona nuestro propio equipo. Las llaves, la limpieza y la ayuda por WhatsApp vienen de las mismas personas.",
       browse: "Ver los alojamientos",
+      cine: {
+        eyebrow: "Alojamientos · Costa Blanca",
+        line1: "Tu casa en la", line2: "bahía de Benidorm",
+        lead: "Apartamentos cuidados por gente que vive aquí. Las llaves, la limpieza y la ayuda por WhatsApp vienen de un mismo equipo local.",
+        scroll: "Desliza",
+        introTitle: "No es un portal de anuncios. Una colección cuidada.",
+        introText: "Domia Stays es una agencia boutique de alquiler en Benidorm. Cuidamos un número deliberadamente pequeño de alojamientos, cada uno visitado, decorado y mantenido por nuestro propio equipo, para que al llegar todo simplemente funcione.",
+        introAlt: "La bahía de Benidorm vista desde los pinares sobre Levante"
+      },
       videoLabel: "Benidorm visto desde el mar",
       finder: { title: "Busca un alojamiento", area: "Zona", anyArea: "Cualquier zona", guests: "Huéspedes", anyGuests: "Cualquier número", guestsN: "{n} o más", beds: "Dormitorios", anyBeds: "Cualquiera", bedsN: "{n} o más", go: "Ver alojamientos" },
       homesTitle: "Los alojamientos",
