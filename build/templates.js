@@ -221,11 +221,11 @@
       homesSec += '<section class="sec sec--homes">\n<div class="wrap">\n<div class="sechead"><h2 class="h2">' + esc(h.homesTitle) + '</h2><a class="tlink" href="' + ctx.href('properties') + '">' + esc(fill(h.homesAll, { n: homes.length })) + icon('arrow') + '</a></div>\n';
       homesSec += '<ul class="cards cards--rail">' + featured.map(function (x, i) { return card(ctx, x, { index: i, eager: false }); }).join('') + '</ul>\n</div>\n</section>\n';
     }
-    var statsSec = '<section class="sec sec--stats">\n<div class="wrap">\n<dl class="stats">' + h.stats.map(function (st) { return '<div><dt data-count>' + esc(st[0]) + '</dt><dd>' + esc(st[1]) + '</dd></div>'; }).join('') + '</dl>\n</div>\n</section>\n';
+    var statsSec = '<section class="sec sec--stats">\n<div class="wrap">\n<dl class="stats">' + h.stats.map(function (st) { return '<div><dt data-countup>' + esc(st[0]) + '</dt><dd>' + esc(st[1]) + '</dd></div>'; }).join('') + '</dl>\n</div>\n</section>\n';
     var reviews = ctx.reviews.slice(0, 3);
     var reviewsSec = reviews.length ? '<section class="sec sec--line">\n<div class="wrap">\n<div class="sechead"><h2 class="h2">' + esc(h.reviewsTitle) + '</h2></div>\n' + reviewList(ctx, reviews) + '\n</div>\n</section>\n' : '';
     var ownersSec = '<section class="sec navy owners-teaser">\n<div class="wrap owners-teaser__in">\n<div>\n<h2 class="h2">' + esc(h.ownersTitle) + '</h2>\n<p class="lead">' + esc(h.ownersText) + '</p>\n<p class="btns"><a class="btn btn--gold" href="' + ctx.href('owners') + '">' + esc(h.ownersCta) + '</a><a class="btn btn--ghost" href="' + ctx.href('owner-calculator') + '">' + esc(h.ownersCalc) + '</a></p>\n</div>\n' +
-      '<p class="dfig"><b data-count>' + esc(h.ownersFigure) + '</b><span>' + esc(h.ownersFigureLabel) + '</span></p>\n</div>\n</section>\n';
+      '<p class="dfig"><b data-countup>' + esc(h.ownersFigure) + '</b><span>' + esc(h.ownersFigureLabel) + '</span></p>\n</div>\n</section>\n';
 
     var preloads;
     if (cine) {
@@ -417,7 +417,7 @@
   function owners(ctx) {
     var t = ctx.t, o = t.owners, s = '';
     s += '<section class="ohero navy">\n<div class="wrap ohero__in">\n<div>\n<h1 class="h1">' + esc(o.h1) + '</h1>\n<p class="lead">' + esc(o.lead) + '</p>\n<p class="btns"><a class="btn btn--gold" href="' + wa(ctx, t.wa.evaluation) + '" target="_blank" rel="noopener">' + icon('whatsapp') + esc(o.cta) + '</a><a class="btn btn--ghost" href="' + ctx.href('owner-calculator') + '">' + esc(o.calc) + '</a></p>\n</div>\n';
-    s += '<p class="dfig"><b data-count>' + esc(o.figure) + '</b><span>' + esc(o.figureLabel) + '</span><small>' + esc(o.figureNote) + '</small></p>\n</div>\n</section>\n';
+    s += '<p class="dfig"><b data-countup>' + esc(o.figure) + '</b><span>' + esc(o.figureLabel) + '</span><small>' + esc(o.figureNote) + '</small></p>\n</div>\n</section>\n';
 
     s += '<section class="sec">\n<div class="wrap split">\n<div class="split__head"><h2 class="h2">' + esc(o.earnTitle) + '</h2></div>\n<div class="split__body">\n';
     s += '<div class="earn"><div class="earn__row"><p>' + esc(o.earnLong) + '</p><div class="earn__bar earn__bar--low"><span></span></div><p class="earn__val"><b>' + esc(o.earnLongVal) + '</b> ' + esc(o.perMonth) + '</p></div>';

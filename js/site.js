@@ -88,7 +88,7 @@
         requestAnimationFrame(step);
       });
     }, { threshold: 0.6 });
-    $$('[data-count]').forEach(function (el) { countIo.observe(el); });
+    $$('[data-countup]').forEach(function (el) { countIo.observe(el); });
   }
 
   /* ----- large photos drift slightly as the page scrolls ----- */

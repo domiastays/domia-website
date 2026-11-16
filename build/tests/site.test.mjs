@@ -235,7 +235,7 @@ ok('contact: phone, email and WhatsApp links are correct', (await D.getAttribute
 
 // --- owners
 await D.goto(BASE + 'owners.html', { waitUntil: 'load' });
-await D.waitForFunction(() => document.querySelector('.dfig').textContent.includes('20%'), null, { timeout: 5000 }).catch(() => {});
+await D.waitForTimeout(2200); // the figure counts up when it comes on screen
 ok('owners: states 20% of net revenue', (await D.textContent('.dfig')).includes('20%') && (await D.textContent('.dfig')).includes('of net revenue'));
 ok('owners: twelve services, six compliance items, five onboarding steps', (await D.locator('.svc dt').count()) === 12 && (await D.locator('.chips li').count()) === 6 && (await D.locator('.steps li').count()) === 5);
 await Promise.all([D.waitForNavigation(), D.click('.ohero a[href="owner-calculator.html"]')]);
@@ -244,7 +244,7 @@ ok('owners: the calculator button opens the calculator', fileOf(D) === 'owner-ca
 await D.goto(BASE + 'index.html', { waitUntil: 'load' }); await D.waitForTimeout(2600);
 ok('movement: the headline and buttons finish their entrance', await D.evaluate(() => [...document.querySelectorAll('.cine__in > *, .hero__copy > *')].every(e => getComputedStyle(e).opacity === '1')));
 ok('movement: content below the screen waits, then eases in when reached', await D.evaluate(async () => { const el = document.querySelector('.owners-teaser .dfig'); const before = el.classList.contains('is-in'); el.scrollIntoView({ block: 'center' }); await new Promise(r => setTimeout(r, 1500)); return !before && el.classList.contains('is-in') && getComputedStyle(el).opacity === '1'; }));
-ok('movement: numbers count up to their real value', await D.evaluate(async () => { await new Promise(r => setTimeout(r, 1800)); return document.querySelector('.owners-teaser [data-count]').textContent === '20%'; }));
+ok('movement: numbers count up to their real value', await D.evaluate(async () => { await new Promise(r => setTimeout(r, 1800)); return document.querySelector('.owners-teaser [data-countup]').textContent === '20%'; }));
 ok('movement: the progress line follows the scroll', await D.evaluate(async () => { window.scrollTo(0, document.documentElement.scrollHeight); await new Promise(r => setTimeout(r, 400)); return /scaleX\((1|0\.99)/.test(document.querySelector('.progress').style.transform); }));
 ok('movement: nothing is left invisible at the end of the page', await D.evaluate(async () => { for (let y = 0; y <= document.documentElement.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 80)); } await new Promise(r => setTimeout(r, 1600)); return [...document.querySelectorAll('.rv')].filter(e => !e.closest('[hidden]') && getComputedStyle(e).opacity !== '1').length; }) === 0);
 const R = await newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });

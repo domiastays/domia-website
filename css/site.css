@@ -572,7 +572,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:3px solid var(
 .btn--gold::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.5) 50%,transparent 65%);transform:translateX(-130%);pointer-events:none}
 .card__media{transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s ease}
 .card__link:hover .card__media{transform:translateY(-5px);box-shadow:0 26px 44px -26px rgba(8,20,34,.5)}
-[data-count]{font-variant-numeric:lining-nums tabular-nums}
+[data-countup]{font-variant-numeric:lining-nums tabular-nums}
 @media (prefers-reduced-motion:no-preference){
   .js .rv{opacity:0;transform:translateY(28px);transition:opacity .85s cubic-bezier(.2,.7,.2,1) var(--rv-d,0s),transform .85s cubic-bezier(.2,.7,.2,1) var(--rv-d,0s)}
   .js .rv.is-in{opacity:1;transform:none}
