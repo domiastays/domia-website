@@ -33,12 +33,10 @@
     home: {
       title: "Holiday apartments in Benidorm | Domia Stays",
       desc: "Holiday apartments in Benidorm, managed by a local team. See the homes, check the details and ask about your dates on WhatsApp.",
-      h1: "Holiday homes in Benidorm, looked after by people who live here.",
-      lead: "Every apartment is managed by our own team. The keys, the cleaning and the help on WhatsApp all come from the same people.",
       browse: "See the homes",
       cine: {
-        eyebrow: "Holiday homes · Costa Blanca",
-        line1: "Your home on the", line2: "Benidorm bay",
+        eyebrow: "Curated holiday homes",
+        pre: "Your", gold: "stay", post: "on the", line2: "Costa Blanca",
         lead: "Apartments looked after by people who live here. The keys, the cleaning and the help on WhatsApp all come from one local team.",
         scroll: "Scroll",
         introTitle: "Not a listings site. A curated collection.",
@@ -46,10 +44,9 @@
         introAlt: "Benidorm bay seen from the pine hills above Levante"
       },
       videoLabel: "Benidorm seen from the water",
-      finder: { title: "Find a home", area: "Area", anyArea: "Any area", guests: "Guests", anyGuests: "Any number", guestsN: "{n} or more", beds: "Bedrooms", anyBeds: "Any", bedsN: "{n} or more", go: "Show homes" },
+      finder: { title: "Looking for something specific?", lead: "Choose the area, how many you are and the bedrooms you need.", area: "Area", anyArea: "Any area", guests: "Guests", anyGuests: "Any number", guestsN: "{n} or more", beds: "Bedrooms", anyBeds: "Any", bedsN: "{n} or more", go: "Show homes" },
       homesTitle: "The homes",
       homesAll: "See all {n} homes",
-      includesTitle: "What every stay includes",
       includes: [
         ["An easy arrival", "Check-in is from {from} to {until}, by smart lock, lockbox or with one of us at the door. Arriving outside those hours? Tell us and we will do our best to arrange it."],
         ["A home that is ready", "Cleaned to a hotel standard before every arrival, with fresh linen and towels waiting."],
@@ -331,12 +328,10 @@
     home: {
       title: "Apartamentos vacacionales en Benidorm | Domia Stays",
       desc: "Apartamentos vacacionales en Benidorm gestionados por un equipo local. Mira los alojamientos y consulta tus fechas por WhatsApp.",
-      h1: "Alojamientos en Benidorm, cuidados por gente que vive aquí.",
-      lead: "Cada apartamento lo gestiona nuestro propio equipo. Las llaves, la limpieza y la ayuda por WhatsApp vienen de las mismas personas.",
       browse: "Ver los alojamientos",
       cine: {
-        eyebrow: "Alojamientos · Costa Blanca",
-        line1: "Tu casa en la", line2: "bahía de Benidorm",
+        eyebrow: "Alojamientos seleccionados",
+        pre: "Tu", gold: "estancia", post: "en la", line2: "Costa Blanca",
         lead: "Apartamentos cuidados por gente que vive aquí. Las llaves, la limpieza y la ayuda por WhatsApp vienen de un mismo equipo local.",
         scroll: "Desliza",
         introTitle: "No es un portal de anuncios. Una colección cuidada.",
@@ -344,10 +339,9 @@
         introAlt: "La bahía de Benidorm vista desde los pinares sobre Levante"
       },
       videoLabel: "Benidorm visto desde el mar",
-      finder: { title: "Busca un alojamiento", area: "Zona", anyArea: "Cualquier zona", guests: "Huéspedes", anyGuests: "Cualquier número", guestsN: "{n} o más", beds: "Dormitorios", anyBeds: "Cualquiera", bedsN: "{n} o más", go: "Ver alojamientos" },
+      finder: { title: "¿Buscas algo concreto?", lead: "Elige la zona, cuántos sois y los dormitorios que necesitáis.", area: "Zona", anyArea: "Cualquier zona", guests: "Huéspedes", anyGuests: "Cualquier número", guestsN: "{n} o más", beds: "Dormitorios", anyBeds: "Cualquiera", bedsN: "{n} o más", go: "Ver alojamientos" },
       homesTitle: "Los alojamientos",
       homesAll: "Ver los {n} alojamientos",
-      includesTitle: "Qué incluye cada estancia",
       includes: [
         ["Una llegada sencilla", "La entrada es de {from} a {until}, con cerradura inteligente, caja de seguridad o uno de nosotros en la puerta. ¿Llegas fuera de ese horario? Dínoslo y haremos lo posible por organizarlo."],
         ["Un alojamiento listo", "Limpieza de nivel hotel antes de cada llegada, con ropa de cama y toallas recién puestas."],

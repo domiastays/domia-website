@@ -7,7 +7,7 @@
   var L = g.DomiaLib, esc = L.esc, tx = L.tx, icon = L.icon, fill = L.fill, money = L.money;
 
   // Bump when css/site.css or js/site.js change, so browsers fetch the new files.
-  var ASSET_VERSION = '20261116b';
+  var ASSET_VERSION = '20261116c';
 
   // Site photography in assets/img (name: [width, height] of the large file).
   var IMG = {
@@ -192,7 +192,7 @@
 
   function home(ctx) {
     var t = ctx.t, h = t.home, site = ctx.site, homes = ctx.homes, s = '';
-    var cine = site.heroStyle !== 'window';
+    var cine = site.heroStyle === 'cinematic';
     var featured = homes.filter(function (x) { return x.featured; }).slice(0, 6);
     if (!featured.length) featured = homes.slice(0, 6);
     var areas = ctx.areas, maxGuests = 0, maxBeds = 0;
@@ -200,9 +200,11 @@
 
     var buttons = '<p class="btns"><a class="btn btn--gold" href="' + ctx.href('properties') + '">' + esc(h.browse) + '</a><a class="btn btn--ghost" href="' + wa(ctx, t.wa.general) + '" target="_blank" rel="noopener">' + icon('whatsapp') + esc(t.wa.cta) + '</a></p>\n';
 
+    // The search sits under the homes, so the first screen stays clean.
     var finder = '';
     if (homes.length) {
-      finder += '<div class="wrap">\n<form class="finder" action="' + ctx.href('properties') + '" method="get" aria-label="' + esc(h.finder.title) + '">\n';
+      finder += '<div class="find">\n<div class="find__head"><h3 class="h3">' + esc(h.finder.title) + '</h3><p>' + esc(h.finder.lead) + '</p></div>\n';
+      finder += '<form class="finder" action="' + ctx.href('properties') + '" method="get" aria-label="' + esc(h.finder.title) + '">\n';
       finder += '<label class="finder__f"><span>' + esc(h.finder.area) + '</span><select name="area"><option value="">' + esc(h.finder.anyArea) + '</option>' + areas.map(function (a) { return '<option>' + esc(a) + '</option>'; }).join('') + '</select></label>\n';
       finder += '<label class="finder__f"><span>' + esc(h.finder.guests) + '</span><select name="guests"><option value="">' + esc(h.finder.anyGuests) + '</option>';
       for (var gN = 2; gN <= maxGuests; gN += 2) finder += '<option value="' + gN + '">' + esc(fill(h.finder.guestsN, { n: gN })) + '</option>';
@@ -219,7 +221,7 @@
     var homesSec = '';
     if (featured.length) {
       homesSec += '<section class="sec sec--homes">\n<div class="wrap">\n<div class="sechead"><h2 class="h2">' + esc(h.homesTitle) + '</h2><a class="tlink" href="' + ctx.href('properties') + '">' + esc(fill(h.homesAll, { n: homes.length })) + icon('arrow') + '</a></div>\n';
-      homesSec += '<ul class="cards cards--rail">' + featured.map(function (x, i) { return card(ctx, x, { index: i, eager: false }); }).join('') + '</ul>\n</div>\n</section>\n';
+      homesSec += '<ul class="cards cards--rail">' + featured.map(function (x, i) { return card(ctx, x, { index: i, eager: false }); }).join('') + '</ul>\n' + finder + '</div>\n</section>\n';
     }
     var statsSec = '<section class="sec sec--stats">\n<div class="wrap">\n<dl class="stats">' + h.stats.map(function (st) { return '<div><dt data-countup>' + esc(st[0]) + '</dt><dd>' + esc(st[1]) + '</dd></div>'; }).join('') + '</dl>\n</div>\n</section>\n';
     var reviews = ctx.reviews.slice(0, 3);
@@ -227,35 +229,40 @@
     var ownersSec = '<section class="sec navy owners-teaser">\n<div class="wrap owners-teaser__in">\n<div>\n<h2 class="h2">' + esc(h.ownersTitle) + '</h2>\n<p class="lead">' + esc(h.ownersText) + '</p>\n<p class="btns"><a class="btn btn--gold" href="' + ctx.href('owners') + '">' + esc(h.ownersCta) + '</a><a class="btn btn--ghost" href="' + ctx.href('owner-calculator') + '">' + esc(h.ownersCalc) + '</a></p>\n</div>\n' +
       '<p class="dfig"><b data-countup>' + esc(h.ownersFigure) + '</b><span>' + esc(h.ownersFigureLabel) + '</span></p>\n</div>\n</section>\n';
 
+    // Headline: two lines that rise into place; the gold words carry a slow shine and one small glint.
+    var c = h.cine;
+    var spark = '<svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.7 6.5 4.9 10.7 12 12-7.1 1.3-11.3 5.5-12 12-.7-6.5-4.9-10.7-12-12c7.1-1.3 11.3-5.5 12-12z"/></svg>';
+    var headline = '<span class="ln"><span>' + esc(c.pre) + ' <em class="shim">' + esc(c.gold) + '</em> ' + esc(c.post) + '</span></span> <span class="ln ln--2"><span><em class="shim">' + esc(c.line2) + '</em>' + spark + '</span></span>';
+    var words = [site.tagline, 'Benidorm', 'Costa Blanca'].concat(areas);
+    var strip = words.map(function (w) { return '<span>' + esc(w) + '</span><i>◆</i>'; }).join('');
+    var marquee = '<div class="marquee" aria-hidden="true"><div class="marquee__track">' + strip + strip + '</div></div>\n';
+
     var preloads;
     if (cine) {
-      // Full-screen video hero with the finder docked to it, then a moving strip of place names.
+      // Full-screen video behind the headline.
       s += '<section class="cine navy">\n<div class="cine__stage">\n';
       s += '<picture class="cine__media"><source media="(max-width: 700px)" srcset="assets/video/benidorm-tall-poster.jpg"><img src="assets/video/benidorm-wide-poster.jpg" width="1600" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high"></picture>\n';
       s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-wide.mp4" data-src-sm="assets/video/benidorm-tall.mp4"></video>\n<div class="cine__shade"></div>\n';
-      s += '<div class="wrap cine__in">\n<p class="cine__eyebrow">' + esc(h.cine.eyebrow) + '</p>\n<h1 class="cine__title"><span class="ln"><span>' + esc(h.cine.line1) + '</span></span> <span class="ln"><em class="shim">' + esc(h.cine.line2) + '</em></span></h1>\n<p class="lead">' + esc(h.cine.lead) + '</p>\n' + buttons + '</div>\n';
-      s += '<span class="cine__cue" aria-hidden="true">' + esc(h.cine.scroll) + '</span>\n</div>\n' + finder;
-      var words = [site.tagline, 'Benidorm', 'Costa Blanca'].concat(areas);
-      var strip = words.map(function (w) { return '<span>' + esc(w) + '</span><i>◆</i>'; }).join('');
-      s += '<div class="marquee" aria-hidden="true"><div class="marquee__track">' + strip + strip + '</div></div>\n</section>\n';
-      s += homesSec;
-      s += '<section class="sec intro">\n<div class="wrap intro__in">\n<div class="intro__media">' + siteImg('bay-from-hills', h.cine.introAlt, '(min-width: 900px) 36vw, 80vw') + '</div>\n';
-      s += '<div class="intro__text"><h2 class="h2">' + esc(h.cine.introTitle) + '</h2>\n<p class="lead">' + esc(h.cine.introText) + '</p>\n' + includesList + '\n' + guestLink + '</div>\n</div>\n</section>\n';
-      s += '<section class="band band--tall" data-parallax>\n' + siteImg('benidorm-dusk', h.benidormAlt, '100vw', { cls: 'band__img' }) + '\n<div class="band__shade"></div>\n<div class="wrap band__in">\n<p class="band__quote" lang="en">“' + esc(site.tagline) + '”</p>\n<h2 class="h2">' + esc(h.benidormTitle) + '</h2>\n<p class="lead">' + esc(h.benidormText) + '</p>\n<a class="btn btn--gold" href="' + ctx.href('benidorm') + '">' + esc(h.benidormLink) + '</a>\n</div>\n</section>\n';
-      s += statsSec + reviewsSec + ownersSec;
+      s += '<div class="wrap cine__in">\n<p class="eyebrow">' + esc(c.eyebrow) + '</p>\n<h1 class="hl">' + headline + '</h1>\n<p class="lead">' + esc(c.lead) + '</p>\n' + buttons + '</div>\n';
+      s += '<span class="cine__cue" aria-hidden="true">' + esc(c.scroll) + '</span>\n</div>\n' + marquee + '</section>\n';
       preloads = [{ src: 'assets/video/benidorm-wide-poster.jpg', media: '(min-width: 701px)' }, { src: 'assets/video/benidorm-tall-poster.jpg', media: '(max-width: 700px)' }];
     } else {
-      // Quieter version: the video sits in a D-shaped window beside the headline.
-      s += '<section class="hero navy' + (homes.length ? '' : ' hero--plain') + '">\n<div class="wrap hero__in">\n';
-      s += '<div class="hero__copy">\n<h1 class="hero__title">' + esc(h.h1) + '</h1>\n<p class="lead">' + esc(h.lead) + '</p>\n' + buttons + '</div>\n';
-      s += '<div class="hero__window">\n<img src="assets/video/benidorm-bay-poster.jpg" srcset="assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w" sizes="(min-width: 900px) 48vw, 100vw" width="1200" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high">\n';
-      s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-bay.mp4" data-src-sm="assets/video/benidorm-bay-sm.mp4"></video>\n</div>\n</div>\n' + finder + '</section>\n';
-      s += homesSec;
-      s += '<section class="sec' + (featured.length ? ' sec--line' : '') + '">\n<div class="wrap split">\n<div class="split__head"><h2 class="h2">' + esc(h.includesTitle) + '</h2>' + guestLink + '</div>\n' + includesList.replace('class="deflist"', 'class="deflist split__body"') + '\n</div>\n</section>\n';
-      s += '<section class="band" data-parallax>\n' + siteImg('benidorm-dusk', h.benidormAlt, '100vw', { cls: 'band__img' }) + '\n<div class="band__shade"></div>\n<div class="wrap band__in">\n<h2 class="h2">' + esc(h.benidormTitle) + '</h2>\n<p class="lead">' + esc(h.benidormText) + '</p>\n<a class="btn btn--gold" href="' + ctx.href('benidorm') + '">' + esc(h.benidormLink) + '</a>\n</div>\n</section>\n';
-      s += statsSec + reviewsSec + ownersSec;
+      // The video plays inside a D-shaped window, the shape of the monogram, with a gold line drawn around it.
+      var sealText = site.tagline + ' · ' + site.tagline + ' · ';
+      var seal = '<div class="seal" aria-hidden="true"><svg viewBox="0 0 120 120"><path id="seal-arc" fill="none" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0"/><text><textPath href="#seal-arc" textLength="286" lengthAdjust="spacing">' + esc(sealText) + '</textPath></text></svg><img src="assets/brand/monogram-gold.svg" width="46" height="42" alt=""></div>\n';
+      s += '<section class="hero navy">\n<div class="wrap hero__in">\n';
+      s += '<div class="hero__copy">\n<p class="eyebrow">' + esc(c.eyebrow) + '</p>\n<h1 class="hl">' + headline + '</h1>\n<p class="lead">' + esc(c.lead) + '</p>\n' + buttons + '</div>\n';
+      s += '<div class="hero__stage" data-tilt>\n<span class="hero__ring" aria-hidden="true"></span>\n<div class="hero__window">\n<img src="assets/video/benidorm-bay-poster.jpg" srcset="assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w" sizes="(min-width: 900px) 48vw, 100vw" width="1200" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high">\n';
+      s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-bay.mp4" data-src-sm="assets/video/benidorm-bay-sm.mp4"></video>\n</div>\n' + seal + '</div>\n</div>\n' + marquee + '</section>\n';
       preloads = [{ src: 'assets/video/benidorm-bay-poster.jpg', srcset: 'assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w', sizes: '(min-width: 900px) 48vw, 100vw' }];
     }
+
+    s += homesSec;
+    s += '<section class="sec intro">\n<div class="wrap intro__in">\n<div class="intro__media">' + siteImg('bay-from-hills', c.introAlt, '(min-width: 900px) 36vw, 80vw') + '</div>\n';
+    s += '<div class="intro__text"><h2 class="h2">' + esc(c.introTitle) + '</h2>\n<p class="lead">' + esc(c.introText) + '</p>\n' + includesList + '\n' + guestLink + '</div>\n</div>\n</section>\n';
+    var quote = ('“' + site.tagline + '”').split(' ').map(function (w, i) { return '<span class="w" style="--i:' + i + '"><span>' + esc(w) + '</span></span>'; }).join(' ');
+    s += '<section class="band band--tall" data-parallax>\n' + siteImg('benidorm-dusk', h.benidormAlt, '100vw', { cls: 'band__img' }) + '\n<div class="band__shade"></div>\n<div class="wrap band__in">\n<p class="band__quote" lang="en">' + quote + '</p>\n<h2 class="h2">' + esc(h.benidormTitle) + '</h2>\n<p class="lead">' + esc(h.benidormText) + '</p>\n<a class="btn btn--gold" href="' + ctx.href('benidorm') + '">' + esc(h.benidormLink) + '</a>\n</div>\n</section>\n';
+    s += statsSec + reviewsSec + ownersSec;
 
     s += closing(ctx);
 
@@ -266,7 +273,7 @@
       address: { '@type': 'PostalAddress', addressLocality: site.locality, postalCode: site.postalCode, addressRegion: site.region, addressCountry: site.country }
     }];
     if (site.url) { ld[0].url = L.abs(site, 'index.html'); ld[0].image = L.abs(site, 'assets/brand/og-cover.jpg'); ld[0].logo = L.abs(site, 'assets/brand/icon-512.png'); }
-    return page(ctx, { title: h.title, desc: h.desc, bodyClass: 'p-home' + (cine ? ' p-home--cine' : ''), jsonld: ld, preloads: preloads }, s);
+    return page(ctx, { title: h.title, desc: h.desc, bodyClass: 'p-home' + (cine ? ' p-home--cine' : ' p-home--window'), jsonld: ld, preloads: preloads }, s);
   }
 
   /* ---------- the collection ---------- */

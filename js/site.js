@@ -53,9 +53,22 @@
     else addEventListener('load', function () { setTimeout(startVideo, 200); });
   }
 
+  /* ----- home: the video window, its gold line and the seal shift a little with the pointer ----- */
+  var tilt = $('[data-tilt]');
+  if (tilt && !reduceMotion && window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var tiltBox = tilt.closest('section') || tilt, tx = 0, ty = 0;
+    var setTilt = throttle(function () { tilt.style.setProperty('--px', tx.toFixed(3)); tilt.style.setProperty('--py', ty.toFixed(3)); });
+    tiltBox.addEventListener('pointermove', function (e) {
+      var r = tiltBox.getBoundingClientRect();
+      tx = (e.clientX - r.left) / r.width * 2 - 1; ty = (e.clientY - r.top) / r.height * 2 - 1;
+      setTilt();
+    });
+    tiltBox.addEventListener('pointerleave', function () { tx = ty = 0; setTilt(); });
+  }
+
   /* ----- things ease in as they come on screen ----- */
   if ('IntersectionObserver' in window && !reduceMotion) {
-    var revealSel = '.sechead, .split__head, .split__body > *, .cards .card, .deflist > div, .stats > div, .dfig, .owners-teaser__in > div, .ohero__in > div, .closing__in > *, .intro__media, .intro__text > *, .band__in > *, .ghero__in > *, .phead .wrap > *, .area, .pics li, .cmp__col, .svc__group, .story > *, .ways li, .form, .review, .filters, .calc__panel, .hgrid__main > *, .earn__up, .chips li, .faq details';
+    var revealSel = '.sechead, .find, .split__head, .split__body > *, .cards .card, .deflist > div, .stats > div, .dfig, .owners-teaser__in > div, .ohero__in > div, .closing__in > *, .intro__media, .intro__text > *, .band__in > *, .ghero__in > *, .phead .wrap > *, .area, .pics li, .cmp__col, .svc__group, .story > *, .ways li, .form, .review, .filters, .calc__panel, .hgrid__main > *, .earn__up, .chips li, .faq details';
     var revealIo = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (en.isIntersecting || en.boundingClientRect.bottom < 0) { en.target.classList.add('is-in'); revealIo.unobserve(en.target); }
