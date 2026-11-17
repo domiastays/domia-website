@@ -7,7 +7,7 @@
   var L = g.DomiaLib, esc = L.esc, tx = L.tx, icon = L.icon, fill = L.fill, money = L.money;
 
   // Bump when css/site.css or js/site.js change, so browsers fetch the new files.
-  var ASSET_VERSION = '20261116d';
+  var ASSET_VERSION = '20261117b';
 
   // Site photography in assets/img (name: [width, height] of the large file).
   var IMG = {
@@ -123,7 +123,7 @@
       if (site[x[0]]) s += '<li><a href="' + esc(site[x[0]]) + '" target="_blank" rel="noopener">' + icon('external') + x[1] + '</a></li>';
     });
     s += '</ul></div>\n</div>\n';
-    s += '<div class="ftr__bar"><span>© ' + ctx.year + ' ' + esc(sentence(site.legalName)) + ' ' + esc(t.footer.rights) + '.</span><span class="ftr__tag">' + esc(site.tagline) + '</span></div>\n';
+    s += '<div class="ftr__bar"><span>© ' + ctx.year + ' ' + esc(sentence(site.legalName)) + ' ' + esc(t.footer.rights) + '.</span><span class="ftr__legal"><a href="' + ctx.href('legal') + '">' + esc(t.footer.legal) + '</a><a href="' + ctx.href('privacy') + '">' + esc(t.footer.privacy) + '</a></span><span class="ftr__tag">' + esc(site.tagline) + '</span></div>\n';
     s += '</div>\n</footer>\n';
     return s;
   }
@@ -192,9 +192,33 @@
 
   /* ---------- home ---------- */
 
+  // Home page style "letter": a slim gold D drawn from the light weight of the heading font (Cormorant Garamond),
+  // with the counter opened up so the strokes are fine. The video shows through the counter and the gold covers its edge.
+  // This is a letter, not the logo: the header, footer and seal keep the official logo files.
+  // The shape of the counter is repeated as a polygon in css/site.css (.hero__dclip); both come from one script, so change them together.
+  var LETTER_D = {
+    w: 616.6, h: 691.0,
+    outer: 'M271.96 661Q246.2 661 208.48 658.0Q170.76 655 138.56 655Q109.12 655 81.52 656.0Q53.92 657 31.84 657Q30.0 657 30.0 651.0Q30.0 645 31.84 645Q66.8 645 84.74 640.0Q102.68 635 108.66 620.0Q114.64 605 114.64 576L114.64 113Q114.64 84 108.66 69.5Q102.68 55 85.2 49.5Q67.72 44 32.76 44Q30.92 44 30.92 38.0Q30.92 32 32.76 32Q54.84 32 81.98 33.5Q109.12 35 138.56 35Q168.0 35 201.58 32.5Q235.16 30 259.08 30Q357.52 30 431.12 70.0Q504.72 110 545.66 179.0Q586.6 248 586.6 334Q586.6 409 561.76 469.5Q536.92 530 493.22 572.5Q449.52 615 392.48 638.0Q335.44 661 271.96 661Z',
+    inner: 'M250.41 648Q339.28 648 407.52 614.5Q475.76 581 514.91 515.5Q554.06 450 554.06 356Q554.06 268 517.55 197.5Q481.05 127 414.4 85.0Q347.75 43 255.7 43Q191.16 43 163.66 55.5Q136.15 68 136.15 115L136.15 565Q136.15 608 157.84 628.0Q179.52 648 250.41 648Z',
+    echo: 'M253.7 -1.1 L274.9 -0.8 L295.8 0.3 L311.6 1.7 L331.3 4.4 L346.4 7.1 L365.3 11.4 L379.9 15.4 L397.9 21.3 L411.7 26.5 L428.8 34.0 L442.0 40.5 L458.3 49.7 L473.9 59.5 L488.5 69.8 L502.7 81.1 L513.2 90.3 L526.1 102.8 L538.0 115.6 L546.9 126.3 L557.7 140.6 L567.8 155.6 L576.8 170.8 L585.2 186.9 L591.0 199.6 L597.5 216.0 L602.1 229.3 L606.9 246.3 L611.0 264.1 L613.5 278.1 L615.8 296.5 L617.2 315.2 L617.7 334.1 L617.3 354.5 L616.0 374.1 L614.2 390.1 L611.3 408.9 L607.5 427.7 L603.7 442.7 L598.4 460.3 L593.2 474.6 L586.2 491.5 L578.5 507.7 L570.0 523.4 L560.9 538.5 L551.0 552.9 L540.5 566.7 L529.2 579.9 L517.2 592.5 L504.8 604.2 L489.4 617.2 L475.6 627.7 L461.6 637.2 L447.1 646.0 L429.3 655.5 L413.5 662.9 L397.5 669.4 L381.2 675.1 L364.7 680.0 L348.0 684.1 L327.9 687.8 L310.7 690.1 L292.9 691.5 L275.4 692.1 L254.0 691.8'
+  };
+  function letterD() {
+    var L = LETTER_D, d = L.outer + L.inner;
+    return '<svg class="dl" viewBox="0 0 ' + L.w + ' ' + L.h + '" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs>'
+      + '<linearGradient id="dl-gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="' + L.w + '" y2="' + L.h + '">'
+      + '<stop offset="0" stop-color="#8A6531"/><stop offset=".24" stop-color="#B08547"/><stop offset=".44" stop-color="#D6BC8E"/><stop offset=".5" stop-color="#E8D7B6"/>'
+      + '<stop offset=".57" stop-color="#CBAA74"/><stop offset=".8" stop-color="#A57B40"/><stop offset="1" stop-color="#7A592B"/></linearGradient>'
+      + '<linearGradient id="dl-sheen"><stop offset="0" stop-color="#FFF7E8" stop-opacity="0"/><stop offset=".5" stop-color="#FFF7E8" stop-opacity=".6"/><stop offset="1" stop-color="#FFF7E8" stop-opacity="0"/></linearGradient>'
+      + '<clipPath id="dl-shape"><path clip-rule="evenodd" d="' + d + '"/></clipPath></defs>'
+      + '<path class="dl__echo" pathLength="1" d="' + L.echo + '"/>'
+      + '<path class="dl__fill" fill="url(#dl-gold)" fill-rule="evenodd" d="' + d + '"/>'
+      + '<g clip-path="url(#dl-shape)"><g transform="rotate(14 ' + (L.w / 2) + ' ' + (L.h / 2) + ')"><rect class="dl__sheen" x="-240" y="-220" width="110" height="' + (L.h + 440) + '" fill="url(#dl-sheen)"/></g></g>'
+      + '<path class="dl__line" pathLength="1" d="' + L.outer + '"/><path class="dl__line" pathLength="1" d="' + L.inner + '"/></svg>\n';
+  }
+
   function home(ctx) {
     var t = ctx.t, h = t.home, site = ctx.site, homes = ctx.homes, s = '';
-    var cine = site.heroStyle === 'cinematic';
+    var cine = site.heroStyle === 'cinematic', letter = site.heroStyle === 'letter';
     var featured = homes.filter(function (x) { return x.featured; }).slice(0, 6);
     if (!featured.length) featured = homes.slice(0, 6);
     var areas = ctx.areas, maxGuests = 0, maxBeds = 0;
@@ -254,8 +278,12 @@
       var seal = '<div class="seal" aria-hidden="true"><svg viewBox="0 0 120 120"><path id="seal-arc" fill="none" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0"/><text><textPath href="#seal-arc" textLength="286" lengthAdjust="spacing">' + esc(sealText) + '</textPath></text></svg><img src="assets/brand/monogram-gold.svg" width="46" height="42" alt=""></div>\n';
       s += '<section class="hero navy">\n<div class="wrap hero__in">\n';
       s += '<div class="hero__copy">\n<p class="eyebrow">' + esc(c.eyebrow) + '</p>\n<h1 class="hl">' + headline + '</h1>\n<p class="lead">' + esc(c.lead) + '</p>\n' + buttons + '</div>\n';
-      s += '<div class="hero__stage" data-tilt>\n<span class="hero__ring" aria-hidden="true"></span>\n<div class="hero__window">\n<div class="hero__media">\n<img src="assets/video/benidorm-bay-poster.jpg" srcset="assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w" sizes="(min-width: 900px) 48vw, 100vw" width="1200" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high">\n';
-      s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-bay.mp4" data-src-sm="assets/video/benidorm-bay-sm.mp4"></video>\n</div>\n</div>\n' + seal + '</div>\n</div>\n' + marquee + '</section>\n';
+      var stageOpen = letter
+        ? '<div class="hero__stage hero__stage--letter" data-tilt>\n<div class="hero__dclip">\n<div class="hero__media">\n'
+        : '<div class="hero__stage" data-tilt>\n<span class="hero__ring" aria-hidden="true"></span>\n<div class="hero__window">\n<div class="hero__media">\n';
+      var stageClose = '</div>\n</div>\n' + (letter ? letterD() : '') + seal + '</div>\n';
+      s += stageOpen + '<img src="assets/video/benidorm-bay-poster.jpg" srcset="assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w" sizes="(min-width: 900px) 48vw, 100vw" width="1200" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high">\n';
+      s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-bay.mp4" data-src-sm="assets/video/benidorm-bay-sm.mp4"></video>\n' + stageClose + '</div>\n' + marquee + '</section>\n';
       preloads = [{ src: 'assets/video/benidorm-bay-poster.jpg', srcset: 'assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w', sizes: '(min-width: 900px) 48vw, 100vw' }];
     }
 
@@ -269,13 +297,14 @@
     s += closing(ctx);
 
     var ld = [{
-      '@context': 'https://schema.org', '@type': 'LodgingBusiness', name: site.legalName, alternateName: site.name,
+      '@context': 'https://schema.org', '@type': 'LodgingBusiness', name: site.name, legalName: site.registeredName || site.legalName,
       description: h.desc, slogan: site.tagline, email: site.email, telephone: String(site.phone).replace(/\s/g, ''),
       priceRange: '€€', areaServed: 'Benidorm, Costa Blanca, Spain',
       address: { '@type': 'PostalAddress', addressLocality: site.locality, postalCode: site.postalCode, addressRegion: site.region, addressCountry: site.country }
     }];
+    if (site.taxId) ld[0].taxID = site.taxId;
     if (site.url) { ld[0].url = L.abs(site, 'index.html'); ld[0].image = L.abs(site, 'assets/brand/og-cover.jpg'); ld[0].logo = L.abs(site, 'assets/brand/icon-512.png'); }
-    return page(ctx, { title: h.title, desc: h.desc, bodyClass: 'p-home' + (cine ? ' p-home--cine' : ' p-home--window'), jsonld: ld, preloads: preloads }, s);
+    return page(ctx, { title: h.title, desc: h.desc, bodyClass: 'p-home' + (cine ? ' p-home--cine' : letter ? ' p-home--letter' : ' p-home--window'), jsonld: ld, preloads: preloads }, s);
   }
 
   /* ---------- the collection ---------- */
@@ -373,7 +402,7 @@
     for (var gI = 1; gI <= Math.max(1, home.guests); gI++) s += '<option value="' + gI + '"' + (gI === Math.min(2, home.guests) ? ' selected' : '') + '>' + esc(fill(gI === 1 ? p.guest1 : p.guestN, { n: gI })) + '</option>';
     s += '</select></label>\n<p class="enq__err" data-err role="alert" hidden></p>\n';
     s += '<button class="btn ' + (home.bookingUrl ? 'btn--ghost' : 'btn--gold') + ' btn--block" type="submit">' + icon('whatsapp') + esc(p.ask) + '</button>\n</form>\n';
-    s += '<p class="enq__note">' + esc(p.note) + '</p>\n<p class="enq__note">' + esc(p.rate) + '</p>\n';
+    s += '<p class="enq__note">' + esc(p.note) + ' ' + privacyLine(ctx) + '</p>\n<p class="enq__note">' + esc(p.rate) + '</p>\n';
     s += '<ul class="enq__alt">';
     s += '<li><a href="mailto:' + esc(site.email) + '?subject=' + encodeURIComponent(fill(p.emailSubject, { name: home.name })) + '">' + esc(p.email) + '</a></li>';
     if (home.airbnbUrl) s += '<li><a href="' + esc(home.airbnbUrl) + '" target="_blank" rel="noopener">' + esc(p.onAirbnb) + icon('external') + '</a></li>';
@@ -572,9 +601,75 @@
     s += '<label><span>' + esc(c.name) + '</span><input type="text" name="name" autocomplete="name" placeholder="' + esc(c.namePh) + '" required data-skip></label>\n';
     s += '<div class="form__two"><label><span>' + esc(c.dates) + '</span><input type="text" name="dates" placeholder="' + esc(c.datesPh) + '" data-skip></label><label><span>' + esc(c.guests) + '</span><select name="guests" data-skip>' + c.guestOpts.map(function (g2, i) { return '<option' + (i === 1 ? ' selected' : '') + '>' + esc(g2) + '</option>'; }).join('') + '</select></label></div>\n';
     s += '<label><span>' + esc(c.message) + '</span><textarea name="message" rows="4" placeholder="' + esc(c.messagePh) + '" data-skip></textarea></label>\n';
-    s += '<p class="btns"><button class="btn btn--navy" type="submit" data-send="wa">' + icon('whatsapp') + esc(c.send) + '</button><button class="btn btn--ghost" type="submit" data-send="email">' + icon('mail') + esc(c.sendEmail) + '</button></p>\n<p class="small muted">' + esc(c.note) + '</p>\n</form>\n';
+    s += '<p class="btns"><button class="btn btn--navy" type="submit" data-send="wa">' + icon('whatsapp') + esc(c.send) + '</button><button class="btn btn--ghost" type="submit" data-send="email">' + icon('mail') + esc(c.sendEmail) + '</button></p>\n<p class="small muted">' + esc(c.note) + ' ' + privacyLine(ctx) + '</p>\n</form>\n';
     s += '</div>\n</section>\n';
     return page(ctx, { title: c.title, desc: c.desc, bodyClass: 'p-contact', fab: false }, s);
+  }
+
+  /* ---------- legal notice and privacy policy ---------- */
+
+  // One line under every form: what the details are used for, with a link to the privacy policy.
+  function privacyLine(ctx) {
+    return esc(ctx.t.privacy.formNote) + ' <a href="' + ctx.href('privacy') + '">' + esc(ctx.t.footer.privacy) + '</a>.';
+  }
+
+  // The company's details, from Settings. While the company is being incorporated (no registry details yet)
+  // its name says so and the tax number is marked provisional, as on the tax card.
+  function companyFacts(ctx) {
+    var site = ctx.site, l = ctx.t.legal, f = l.f, forming = !String(site.registryDetails || '').trim();
+    var name = (site.registeredName || site.legalName) + (forming ? ' (' + l.inFormation + ')' : '');
+    var rows = [[f.company, esc(name)], [f.trade, esc(site.name)]];
+    if (site.taxId) rows.push([f.taxId, esc(site.taxId) + (forming ? ' (' + esc(l.provisional) + ')' : '')]);
+    if (site.registeredAddress) rows.push([f.address, esc(site.registeredAddress) + ', ' + (ctx.lang === 'es' ? 'España' : 'Spain')]);
+    rows.push([f.email, '<a href="mailto:' + esc(site.email) + '">' + esc(site.email) + '</a>']);
+    rows.push([f.phone, '<a href="' + esc(L.telLink(site)) + '">' + esc(site.phone) + '</a>']);
+    rows.push([f.registry, forming ? esc(l.registryPending) : esc(site.registryDetails)]);
+    if (site.url) rows.push([f.web, esc(site.url.replace(/^https?:\/\//, ''))]);
+    return { name: name, html: '<dl class="legal__facts">' + rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + r[1] + '</dd></div>'; }).join('') + '</dl>' };
+  }
+
+  // Legal text: paragraphs, and lists (a list item is plain text, or [lead, text]). {tokens} become links or details.
+  function legalBody(ctx, sections, vars) {
+    function text(x) { return esc(x).replace(/\{(\w+)\}/g, function (m, k) { return vars[k] == null ? m : vars[k]; }); }
+    return sections.map(function (sec) {
+      var body = sec[1].map(function (part) {
+        if (Array.isArray(part)) return '<ul>' + part.map(function (it) { return '<li>' + (Array.isArray(it) ? '<b>' + esc(it[0]) + '.</b> ' + text(it[1]) : text(it)) + '</li>'; }).join('') + '</ul>';
+        var out = text(part);
+        return out ? '<p>' + out + '</p>' : '';
+      }).join('');
+      return '<section><h2>' + esc(sec[0]) + '</h2>' + body + '</section>';
+    }).join('\n');
+  }
+
+  function legalPage(ctx, copy, cardHtml, vars, bodyClass) {
+    var s = pageHead(ctx, { h1: copy.h1, lead: copy.lead });
+    s += '<section class="sec sec--flush">\n<div class="wrap legal">\n<aside class="legal__card"><h2 class="h3">' + esc(copy.cardTitle) + '</h2>' + cardHtml + '</aside>\n';
+    s += '<div class="legal__body">\n' + legalBody(ctx, copy.sections, vars) + '\n</div>\n</div>\n</section>\n';
+    return page(ctx, { title: copy.title, desc: copy.desc, bodyClass: bodyClass }, s);
+  }
+
+  function legalVars(ctx, name) {
+    var site = ctx.site, l = ctx.t.legal;
+    var mail = '<a href="mailto:' + esc(site.email) + '">' + esc(site.email) + '</a>';
+    var booking = site.bookingSite ? esc(fill(l.booking, { booking: String(site.bookingSite).replace(/^https?:\/\//, '') })) : esc(l.bookingNoSite);
+    return {
+      site: esc(site.url ? site.url.replace(/^https?:\/\//, '') : site.name), name: esc(name), email: mail, booking: booking,
+      // only claimed once every published home has its licence number filled in
+      licences: ctx.homes.length && ctx.homes.every(function (h) { return String(h.licence || '').trim(); }) ? esc(l.licences) : '',
+      privacy: '<a href="' + ctx.href('privacy') + '">' + esc(ctx.t.footer.privacy.charAt(0).toLowerCase() + ctx.t.footer.privacy.slice(1)) + '</a>',
+      aepd: '<a href="https://www.aepd.es" target="_blank" rel="noopener">www.aepd.es</a>'
+    };
+  }
+
+  function legal(ctx) {
+    var co = companyFacts(ctx);
+    return legalPage(ctx, ctx.t.legal, co.html, legalVars(ctx, co.name), 'p-legal');
+  }
+
+  function privacy(ctx) {
+    var co = companyFacts(ctx), p = ctx.t.privacy, v = legalVars(ctx, co.name);
+    var card = co.html + '<p class="small muted legal__note">' + esc(p.cardNote).replace('{email}', v.email) + '</p>';
+    return legalPage(ctx, p, card, v, 'p-privacy');
   }
 
   function notFound(ctx) {
@@ -585,7 +680,7 @@
 
   var api = {
     ASSET_VERSION: ASSET_VERSION, IMG: IMG,
-    pages: { index: home, properties: collection, owners: owners, 'owner-calculator': calculator, benidorm: benidorm, about: about, 'guest-info': guest, contact: contact },
+    pages: { index: home, properties: collection, owners: owners, 'owner-calculator': calculator, benidorm: benidorm, about: about, 'guest-info': guest, contact: contact, legal: legal, privacy: privacy },
     homePage: homePage, notFound: notFound
   };
   g.DomiaTemplates = api;

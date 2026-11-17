@@ -1,6 +1,7 @@
 # Notes for AI assistants working on this repository
 
 This is the Domia Stays website: a static site, English and Spanish, served by GitHub Pages from `main`.
+It is **domiastays.es**. **domiastays.com** is a separate Lodgify booking site that is not in this repository; link to it, never copy it.
 Read `README.md` first. The owner is not a developer and manages homes with `admin/index.html`.
 
 ## How it is built
@@ -23,3 +24,5 @@ Run both tests (`build/tests/README.md`). They cover every link, both languages,
 - Commission is 20% of **net** revenue, after platform fees. Do not restate it as a share of gross, and do not change fees, contract terms or compliance wording without the owner's say-so.
 - Real photos only. No AI-generated property images. No invented reviews: `content/reviews.json` holds real guest reviews with their source, and the reviews sections stay hidden while it is empty.
 - Each home should show its tourist licence number (`licence` field).
+- `legal.html` and `privacy.html` take the company details from `content/site.json` (`registeredName`, `taxId`, `registeredAddress`, `registryDetails`). Use the registered name exactly as on the tax card. Their wording is compliance text: change it only when the owner asks.
+- The site sets no cookies and loads nothing from other sites (fonts and video are local). Keep it that way, or the privacy policy and a consent banner must change first.

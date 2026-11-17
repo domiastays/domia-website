@@ -81,6 +81,26 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://domiastays.es/contact.es.html"/>
   </url>
   <url>
+    <loc>https://domiastays.es/legal.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://domiastays.es/legal.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://domiastays.es/legal.es.html"/>
+  </url>
+  <url>
+    <loc>https://domiastays.es/legal.es.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://domiastays.es/legal.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://domiastays.es/legal.es.html"/>
+  </url>
+  <url>
+    <loc>https://domiastays.es/privacy.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://domiastays.es/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://domiastays.es/privacy.es.html"/>
+  </url>
+  <url>
+    <loc>https://domiastays.es/privacy.es.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://domiastays.es/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://domiastays.es/privacy.es.html"/>
+  </url>
+  <url>
     <loc>https://domiastays.es/properties_mirador-del-levante.html</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://domiastays.es/properties_mirador-del-levante.html"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://domiastays.es/properties_mirador-del-levante.es.html"/>

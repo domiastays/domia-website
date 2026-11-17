@@ -22,7 +22,7 @@
     footer: {
       blurb: "Holiday homes in Benidorm and along the Costa Blanca, managed by a local team.",
       stay: "Stay", owners: "Owners", company: "Domia Stays", contact: "Contact",
-      management: "Property management", rights: "All rights reserved"
+      management: "Property management", rights: "All rights reserved", legal: "Legal notice", privacy: "Privacy policy"
     },
     cta: {
       title: "Let's find your place on the bay",
@@ -291,6 +291,67 @@
       subject: "Stay enquiry"
     },
 
+    legal: {
+      title: "Legal notice | Domia Stays",
+      desc: "Company details for Domia Stays, the terms for using this website, and where to find our privacy policy.",
+      h1: "Legal notice",
+      lead: "Who runs this website, and the terms for using it.",
+      cardTitle: "Who we are",
+      f: { company: "Company", trade: "Trading name", taxId: "Tax ID (NIF)", address: "Registered address", email: "Email", phone: "Phone", registry: "Commercial Registry", web: "Website" },
+      inFormation: "in formation", provisional: "provisional",
+      registryPending: "Being registered. The details will appear here once the company is entered in the Commercial Registry.",
+      sections: [
+        ["This website", ["{site} presents the holiday homes that Domia Stays manages in Benidorm and along the Costa Blanca, and our management service for property owners. It is run by {name}, whose details are on this page.", "{booking}"]],
+        ["Using this website", ["You can browse this website freely and without registering. Please use it lawfully, and do not try to disrupt it or copy its content for commercial use."]],
+        ["Homes, prices and licences", ["We keep the homes, photos and prices on this website as accurate as we can. Prices are a guide and change with the season, the dates and the length of the stay. The price and conditions that apply to your stay are the ones confirmed to you when you book.", "{licences}"]],
+        ["Photos, texts and brand", ["The texts, photos, videos, logo and design of this website belong to Domia Stays or are used with permission. You are welcome to share links to any page, but please do not copy or reuse the content without our written consent."]],
+        ["Links to other websites", ["Links to WhatsApp, Google Maps, booking platforms and other websites are there for your convenience. We are not responsible for their content or for how they handle your data."]],
+        ["Availability", ["We work to keep this website online and free of errors, but we cannot guarantee that it will always be available or error-free, and we may change its content at any time."]],
+        ["Your personal data", ["How we use the details you send us is explained in our {privacy}. This website uses no cookies."]],
+        ["Applicable law", ["These terms are governed by Spanish law. Any dispute will be settled by the courts that the law designates. If you are a consumer, those are usually the courts where you live."]]
+      ],
+      booking: "Bookings made on {booking}, our booking website, or on platforms such as Airbnb and Booking.com follow the terms shown there when you book.",
+      bookingNoSite: "Bookings made on platforms such as Airbnb and Booking.com follow the terms shown there when you book.",
+      licences: "Each home's tourist registration number is shown on its page."
+    },
+
+    privacy: {
+      title: "Privacy policy | Domia Stays",
+      desc: "How Domia Stays uses the details you send us, who receives them, how long we keep them and how to use your rights. No cookies.",
+      h1: "Privacy policy",
+      lead: "What we do with your details, in plain words.",
+      cardTitle: "Who is responsible",
+      cardNote: "For anything about your data, write to {email}.",
+      sections: [
+        ["What we collect, and when", [[
+          ["When you contact us", "The forms on this website do not send anything themselves. They open WhatsApp or your email app with your message ready, and you decide whether to send it. If you do, we receive what you wrote: usually your name, your phone number or email address, your dates, the number of guests and your message."],
+          ["When you stay in one of our homes", "Spanish law requires us to record the identity and stay details of every guest and send them to the Ministry of the Interior (SES.Hospedajes)."],
+          ["When you are a property owner", "If you ask about our management service, we use your contact details and the details of your property to prepare a proposal and, if you go ahead, to manage your contract."],
+          ["When you visit this website", "There are no cookies, analytics or advertising trackers. The website is hosted on GitHub Pages, whose servers record technical data such as your IP address in order to deliver the pages and keep them secure."]
+        ]]],
+        ["Why we use it", [[
+          ["To answer you", "Replying to your questions and preparing the stay or proposal you ask for are steps taken at your request before a contract (article 6.1.b of the GDPR)."],
+          ["To provide the service", "Looking after your stay, or managing your property, is needed to carry out the contract (article 6.1.b)."],
+          ["To meet our legal duties", "Guest registration, invoices and accounting records are required by law (article 6.1.c)."],
+          ["To keep the website running", "Hosting the website securely is in our legitimate interest (article 6.1.f)."]
+        ], "We do not use your details for advertising and we never sell them. We will only send you news or offers if you ask us to."]],
+        ["Who receives it", [[
+          "WhatsApp or your email provider, whichever you choose to message us with.",
+          "Booking platforms such as Airbnb or Booking.com, when you book through them. They handle your data under their own privacy policies.",
+          "Companies that work for us, such as our booking software and our accountant, only as far as they need to and under contract.",
+          "The Ministry of the Interior and the tax authorities, when the law requires it."
+        ], "Some of these providers, such as GitHub, are based in the United States. Transfers there rely on the safeguards the GDPR provides for, such as the European Commission's standard contractual clauses."]],
+        ["How long we keep it", [[
+          "Enquiries that do not lead to a booking or a contract: up to 12 months after our last message.",
+          "Guest registration records: three years after the stay, as the law requires.",
+          "Bookings, contracts and invoices: as long as tax and commercial law require, generally six years."
+        ]]],
+        ["Your rights", ["You can ask to see the details we hold about you, correct them, delete them, limit or object to their use, or receive them in a format you can take elsewhere. Write to {email} and we will reply within one month. We may ask you to confirm who you are.", "If you are not happy with our answer, you can complain to the Spanish Data Protection Agency at {aepd}."]],
+        ["Cookies", ["This website does not use cookies or similar technologies, so there is nothing to accept or reject. If that ever changes, we will update this page and ask for your consent before using any cookie that is not strictly necessary."]]
+      ],
+      formNote: "We only use your details to reply to you."
+    },
+
     notFound: {
       title: "Page not found | Domia Stays",
       h1: "This page isn't here.",
@@ -317,7 +378,7 @@
     footer: {
       blurb: "Alojamientos vacacionales en Benidorm y la Costa Blanca, gestionados por un equipo local.",
       stay: "Alojarse", owners: "Propietarios", company: "Domia Stays", contact: "Contacto",
-      management: "Gestión de propiedades", rights: "Todos los derechos reservados"
+      management: "Gestión de propiedades", rights: "Todos los derechos reservados", legal: "Aviso legal", privacy: "Política de privacidad"
     },
     cta: {
       title: "Encontremos tu lugar en la bahía",
@@ -584,6 +645,67 @@
       note: "Abre WhatsApp o tu correo con tus datos listos para enviar. No hace falta cuenta.",
       msgIntro: "Hola Domia Stays, me gustaría consultar una estancia.", msgName: "Nombre", msgDates: "Fechas", msgGuests: "Huéspedes", msgLooking: "Busco",
       subject: "Consulta de estancia"
+    },
+
+    legal: {
+      title: "Aviso legal | Domia Stays",
+      desc: "Datos de la empresa Domia Stays, condiciones de uso de este sitio web y dónde encontrar nuestra política de privacidad.",
+      h1: "Aviso legal",
+      lead: "Quién está detrás de este sitio web y las condiciones para usarlo.",
+      cardTitle: "Quiénes somos",
+      f: { company: "Empresa", trade: "Nombre comercial", taxId: "NIF", address: "Domicilio social", email: "Correo electrónico", phone: "Teléfono", registry: "Registro Mercantil", web: "Sitio web" },
+      inFormation: "en constitución", provisional: "provisional",
+      registryPending: "En trámite. Los datos de inscripción aparecerán aquí cuando la sociedad esté inscrita en el Registro Mercantil.",
+      sections: [
+        ["Este sitio web", ["{site} presenta los alojamientos turísticos que Domia Stays gestiona en Benidorm y en la Costa Blanca, y nuestro servicio de gestión para propietarios. Su titular es {name}, cuyos datos figuran en esta página.", "{booking}"]],
+        ["Uso del sitio web", ["Puedes navegar por este sitio libremente y sin registrarte. Te pedimos que lo uses de forma lícita, sin intentar alterar su funcionamiento ni copiar sus contenidos con fines comerciales."]],
+        ["Alojamientos, precios y licencias", ["Mantenemos los alojamientos, las fotos y los precios de esta web tan actualizados como podemos. Los precios son orientativos y varían según la temporada, las fechas y la duración de la estancia. El precio y las condiciones aplicables son los que te confirmamos al hacer la reserva.", "{licences}"]],
+        ["Fotos, textos y marca", ["Los textos, fotos, vídeos, logotipo y diseño de este sitio pertenecen a Domia Stays o se usan con autorización. Puedes compartir enlaces a cualquier página, pero no copiar ni reutilizar sus contenidos sin nuestro permiso por escrito."]],
+        ["Enlaces a otros sitios", ["Los enlaces a WhatsApp, Google Maps, plataformas de reserva y otros sitios se ofrecen para tu comodidad. No somos responsables de sus contenidos ni de cómo tratan tus datos."]],
+        ["Disponibilidad", ["Procuramos que este sitio esté siempre disponible y sin errores, pero no podemos garantizarlo, y podemos cambiar sus contenidos en cualquier momento."]],
+        ["Tus datos personales", ["Cómo usamos los datos que nos envías se explica en nuestra {privacy}. Este sitio web no usa cookies."]],
+        ["Legislación aplicable", ["Estas condiciones se rigen por la ley española. Cualquier controversia se resolverá ante los juzgados y tribunales que correspondan según la ley; si eres consumidor, normalmente los de tu domicilio."]]
+      ],
+      booking: "Las reservas hechas en {booking}, nuestra web de reservas, o en plataformas como Airbnb y Booking.com se rigen por las condiciones que se muestran allí al reservar.",
+      bookingNoSite: "Las reservas hechas en plataformas como Airbnb y Booking.com se rigen por las condiciones que se muestran allí al reservar.",
+      licences: "El número de registro turístico de cada alojamiento figura en su página."
+    },
+
+    privacy: {
+      title: "Política de privacidad | Domia Stays",
+      desc: "Cómo usa Domia Stays los datos que nos envías, quién los recibe, cuánto tiempo los guardamos y cómo ejercer tus derechos. Sin cookies.",
+      h1: "Política de privacidad",
+      lead: "Qué hacemos con tus datos, explicado con claridad.",
+      cardTitle: "Responsable del tratamiento",
+      cardNote: "Para cualquier cuestión sobre tus datos, escríbenos a {email}.",
+      sections: [
+        ["Qué datos tratamos y cuándo", [[
+          ["Cuando nos contactas", "Los formularios de esta web no envían nada por sí mismos: abren WhatsApp o tu aplicación de correo con el mensaje preparado, y tú decides si lo envías. Si lo haces, recibimos lo que has escrito: normalmente tu nombre, tu teléfono o correo electrónico, tus fechas, el número de huéspedes y tu mensaje."],
+          ["Cuando te alojas en una de nuestras viviendas", "La ley española nos obliga a registrar la identidad y los datos de la estancia de cada huésped y a comunicarlos al Ministerio del Interior (SES.Hospedajes)."],
+          ["Cuando eres propietario", "Si te interesa nuestro servicio de gestión, usamos tus datos de contacto y los de tu vivienda para preparar una propuesta y, si seguimos adelante, para gestionar el contrato."],
+          ["Cuando visitas esta web", "No usamos cookies, analítica ni rastreadores publicitarios. La web está alojada en GitHub Pages, cuyos servidores registran datos técnicos como tu dirección IP para servir las páginas y mantenerlas seguras."]
+        ]]],
+        ["Para qué los usamos", [[
+          ["Para responderte", "Contestar a tus preguntas y preparar la estancia o la propuesta que nos pides son medidas precontractuales aplicadas a petición tuya (artículo 6.1.b del RGPD)."],
+          ["Para prestar el servicio", "Atender tu estancia o gestionar tu vivienda es necesario para cumplir el contrato (artículo 6.1.b)."],
+          ["Para cumplir la ley", "El registro de viajeros, las facturas y la contabilidad son obligaciones legales (artículo 6.1.c)."],
+          ["Para mantener la web", "Alojar la web de forma segura es de nuestro interés legítimo (artículo 6.1.f)."]
+        ], "No usamos tus datos con fines publicitarios y nunca los vendemos. Solo te enviaremos novedades u ofertas si nos lo pides."]],
+        ["Quién los recibe", [[
+          "WhatsApp o tu proveedor de correo, según el canal que elijas para escribirnos.",
+          "Plataformas de reserva como Airbnb o Booking.com, cuando reservas a través de ellas. Tratan tus datos según sus propias políticas de privacidad.",
+          "Empresas que trabajan para nosotros, como nuestro programa de reservas y nuestra asesoría, solo en la medida necesaria y con contrato.",
+          "El Ministerio del Interior y la Agencia Tributaria, cuando la ley lo exige."
+        ], "Algunos de estos proveedores, como GitHub, están en Estados Unidos. Esas transferencias se basan en las garantías que prevé el RGPD, como las cláusulas contractuales tipo de la Comisión Europea."]],
+        ["Cuánto tiempo los guardamos", [[
+          "Consultas que no terminan en reserva ni contrato: hasta 12 meses después de nuestro último mensaje.",
+          "Registro de viajeros: tres años desde el final de la estancia, como exige la ley.",
+          "Reservas, contratos y facturas: el tiempo que exigen las normas fiscales y mercantiles, en general seis años."
+        ]]],
+        ["Tus derechos", ["Puedes pedirnos acceso a tus datos, su rectificación o supresión, limitar u oponerte a su uso, o recibirlos en un formato que puedas llevar a otro proveedor. Escríbenos a {email} y te responderemos en el plazo de un mes. Podemos pedirte que acredites tu identidad.", "Si no estás conforme con nuestra respuesta, puedes reclamar ante la Agencia Española de Protección de Datos en {aepd}."]],
+        ["Cookies", ["Esta web no usa cookies ni tecnologías similares, así que no hay nada que aceptar ni rechazar. Si eso cambia, actualizaremos esta página y te pediremos el consentimiento antes de usar cualquier cookie que no sea estrictamente necesaria."]]
+      ],
+      formNote: "Solo usamos tus datos para responderte."
     },
 
     notFound: {

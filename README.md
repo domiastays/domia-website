@@ -4,12 +4,16 @@ The website of Domia Stays Group S.L.: holiday homes in Benidorm, in English and
 
 It is a plain static site. No server, no database, no monthly platform. GitHub Pages serves the files in this folder as they are.
 
+**Two websites, two addresses.** This folder is **domiastays.es**: the brand site with the homes, the owners pages and the company's legal pages. **domiastays.com** is a separate booking website built in Lodgify; it is not in this folder and nothing here changes it. The legal notice names it as the booking website (manager, Settings, *Booking website*), and a home's *Book online* link can point to its page there.
+
 ## The short version
 
 | I want to… | Do this |
 | --- | --- |
 | Add, edit, hide or remove a home | Open `admin/index.html` in Chrome, make the change, **Save**, then publish |
 | Change the phone, email, check-in times or web address | Same manager, **Settings** tab |
+| Change the company details on the legal notice and privacy policy (name, tax number, address, registry) | Same manager, **Settings**, *Company* |
+| Change the home page style (gold D, D-shaped window, or full-screen video) | Same manager, **Settings**, *Home page style* |
 | Add a real guest review | Same manager, **Reviews** tab |
 | Change other text (home page, owners page, FAQ) | Edit `build/copy.js`, then save anything in the manager to rebuild |
 | Publish | GitHub Desktop: **Commit to main**, then **Push origin** |
@@ -64,7 +68,7 @@ Source: [GitHub's guide to custom domains](https://docs.github.com/en/pages/conf
 index.html, properties.html, …      the pages (generated, do not edit by hand)
 properties_<home>.html              one page per home, plus .es.html for Spanish
 content/properties.json             every home: text, price, photos, licence
-content/site.json                   phone, email, web address, check-in times
+content/site.json                   phone, email, web address, check-in times, company details
 content/reviews.json                guest reviews
 admin/index.html                    the property manager
 build/                              the page generator (lib, copy, templates, generate, cli)
