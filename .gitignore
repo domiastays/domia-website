@@ -1,0 +1,5 @@
+# Files that computers create by themselves: never part of the website
+.DS_Store
+Thumbs.db
+desktop.ini
+node_modules/
