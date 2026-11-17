@@ -7,7 +7,7 @@
   var L = g.DomiaLib, esc = L.esc, tx = L.tx, icon = L.icon, fill = L.fill, money = L.money;
 
   // Bump when css/site.css or js/site.js change, so browsers fetch the new files.
-  var ASSET_VERSION = '20261117d';
+  var ASSET_VERSION = '20261117e';
 
   // Site photography in assets/img (name: [width, height] of the large file).
   var IMG = {

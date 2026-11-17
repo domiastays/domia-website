@@ -158,7 +158,8 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
    in assets/brand/monogram-gold.svg; the polygon is the inside of that D, taken from the same file and running along the
    middle of the gold stroke, so the mark laid on top always covers the edge. The logo file itself is not altered. */
 /* the picture is a little larger than the window, so it can shift behind the frame while the frame itself stays still */
-.hero__media{position:absolute;inset:-14px}
+/* the video stays still and at its own sharpness: no movement with the mouse, no slow zoom */
+.hero__media{position:absolute;inset:0}
 .hero__media img,.hero__media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:40% 50%}
 .hero__media video{opacity:0;transition:opacity .9s ease}
 .hero__media video.is-on{opacity:1}
@@ -191,7 +192,6 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
 }
 @media (prefers-reduced-motion:no-preference){
   .hero__media{animation:window-open 1.3s cubic-bezier(.2,.7,.2,1) .1s backwards}
-  .hero__media img,.hero__media video{animation:drift 26s ease-in-out infinite alternate}
   .hero__ring{animation:ring-draw 2.6s cubic-bezier(.65,0,.2,1) .6s both}
   .hero__gem{animation:gem-in .6s cubic-bezier(.2,.7,.2,1.4) 1.45s both}
   .hero__gem--b{animation-delay:2.4s}
@@ -225,8 +225,7 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
   }
 }
 @media (prefers-reduced-motion:no-preference) and (hover:hover) and (pointer:fine){
-  .hero__media,.hero__ring,.hero__gem,.seal{transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
-  .hero__media{transform:translate3d(calc(var(--px)*-10px),calc(var(--py)*-8px),0)}
+  .hero__ring,.hero__gem,.seal{transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
   .hero__ring{transform:translate3d(calc(var(--px)*6px),calc(var(--py)*4px),0)}
   .hero__gem{transform:translate3d(calc(var(--px)*6px),calc(var(--py)*4px),0) rotate(45deg)}
   .seal{transform:translate3d(calc(var(--px)*-12px),calc(var(--py)*-9px),0)}
