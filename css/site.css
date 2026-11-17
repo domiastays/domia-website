@@ -145,7 +145,7 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
   .shim{padding-right:.06em;background:linear-gradient(100deg,#B08547 0%,#D9BD8C 34%,#F4E7CC 48%,#D9BD8C 60%,#B08547 100%);background-size:250% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 }
 .spark{position:absolute;top:.02em;right:-.3em;width:.3em;height:.3em;fill:#FFF1CF;filter:drop-shadow(0 0 6px rgba(255,236,190,.75))}
-.hero{position:relative;overflow:hidden;padding-top:clamp(12px,2.4vw,36px)}
+.hero{position:relative;overflow:hidden;padding-top:clamp(22px,2.4vw,36px)}
 .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(52% 62% at 76% 42%,rgba(58,100,145,.4),transparent 72%),radial-gradient(40% 46% at 6% 96%,rgba(176,133,71,.13),transparent 70%);pointer-events:none}
 .hero__in{position:relative;display:grid;gap:52px;align-items:center;padding-bottom:clamp(36px,5vw,64px)}
 .hero__copy{order:2}

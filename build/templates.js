@@ -7,7 +7,7 @@
   var L = g.DomiaLib, esc = L.esc, tx = L.tx, icon = L.icon, fill = L.fill, money = L.money;
 
   // Bump when css/site.css or js/site.js change, so browsers fetch the new files.
-  var ASSET_VERSION = '20261117c';
+  var ASSET_VERSION = '20261117d';
 
   // Site photography in assets/img (name: [width, height] of the large file).
   var IMG = {
@@ -257,9 +257,9 @@
       // the gold line round the whole D, with a small gold diamond set on each corner of the straight side
       var stageOpen = '<div class="hero__stage" data-tilt>\n<span class="hero__ring" aria-hidden="true"></span><i class="hero__gem hero__gem--t" aria-hidden="true"></i><i class="hero__gem hero__gem--b" aria-hidden="true"></i>\n<div class="hero__window">\n<div class="hero__media">\n';
       var stageClose = '</div>\n</div>\n' + seal + '</div>\n';
-      s += stageOpen + '<img src="assets/video/benidorm-bay-poster.jpg" srcset="assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w" sizes="(min-width: 900px) 48vw, 100vw" width="1200" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high">\n';
-      s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/benidorm-bay.mp4" data-src-sm="assets/video/benidorm-bay-sm.mp4"></video>\n' + stageClose + '</div>\n' + marquee + '</section>\n';
-      preloads = [{ src: 'assets/video/benidorm-bay-poster.jpg', srcset: 'assets/video/benidorm-bay-poster-sm.jpg 640w, assets/video/benidorm-bay-poster.jpg 1200w', sizes: '(min-width: 900px) 48vw, 100vw' }];
+      s += stageOpen + '<img src="assets/video/levante-loop-poster.jpg" srcset="assets/video/levante-loop-poster-sm.jpg 640w, assets/video/levante-loop-poster.jpg 1068w" sizes="(min-width: 900px) 48vw, 100vw" width="1068" height="900" alt="' + esc(h.videoLabel) + '" fetchpriority="high">\n';
+      s += '<video data-hero-video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-src="assets/video/levante-loop.mp4" data-src-sm="assets/video/levante-loop-sm.mp4"></video>\n' + stageClose + '</div>\n' + marquee + '</section>\n';
+      preloads = [{ src: 'assets/video/levante-loop-poster.jpg', srcset: 'assets/video/levante-loop-poster-sm.jpg 640w, assets/video/levante-loop-poster.jpg 1068w', sizes: '(min-width: 900px) 48vw, 100vw' }];
     }
 
     s += homesSec;
