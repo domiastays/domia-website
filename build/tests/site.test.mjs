@@ -66,7 +66,8 @@ async function newPage(opts) {
   const ctx = await browser.newContext(opts);
   const page = await ctx.newPage();
   page.__errors = [];
-  page.on('pageerror', e => page.__errors.push('script error: ' + e.message));
+  // Chrome itself aborts a page-to-page fade when the test clicks on before it ends: browser noise, not a fault of the site
+  page.on('pageerror', e => { if (!/Transition was aborted because of invalid state/.test(e.message)) page.__errors.push('script error: ' + e.message); });
   page.on('console', m => { if (m.type() === 'error') page.__errors.push('console: ' + m.text().slice(0, 140)); });
   page.on('response', r => { if (r.status() >= 400) page.__errors.push(r.status() + ' ' + r.url().replace(BASE, '')); });
   await page.addInitScript(hook);
@@ -354,6 +355,7 @@ for (const [f, es] of [['legal.html', false], ['legal.es.html', true], ['privacy
 ok('privacy policy: names the Spanish data protection agency and says there are no cookies', ['privacy.html', 'privacy.es.html'].every(f => { const h = fs.readFileSync(path.join(ROOT, f), 'utf8'); return h.includes('https://www.aepd.es') && /cookies/i.test(h); }));
 ok('every page links to the legal notice and the privacy policy in its footer', pages.every(f => { const h = fs.readFileSync(path.join(ROOT, f), 'utf8'); const es = f.endsWith('.es.html'); return h.includes('<a href="' + (es ? 'legal.es.html' : 'legal.html') + '">') && h.includes('<a href="' + (es ? 'privacy.es.html' : 'privacy.html') + '">'); }));
 ok('every form that collects details links to the privacy policy', pages.filter(f => /data-(contact|enquiry)/.test(fs.readFileSync(path.join(ROOT, f), 'utf8'))).every(f => { const h = fs.readFileSync(path.join(ROOT, f), 'utf8'); return (h.match(/href="privacy(\.es)?\.html"/g) || []).length >= 2; }));
+ok('every page keeps its own colours: browsers and dark-mode extensions may not repaint it', pages.every(f => { const h = fs.readFileSync(path.join(ROOT, f), 'utf8'); return h.includes('<meta name="color-scheme" content="only light">') && h.includes('<meta name="darkreader-lock">'); }) && /:root\{color-scheme:only light\}/.test(fs.readFileSync(path.join(ROOT, 'css/site.css'), 'utf8')));
 ok('no page loads anything from another website (so no consent banner is needed)', pages.every(f => !/<(script|link|img|iframe|video|source)[^>]+(src|href)="https?:\/\//.test(fs.readFileSync(path.join(ROOT, f), 'utf8').replace(/<link rel="(canonical|alternate)"[^>]*>/g, ''))));
 {
   const P = await newPage({ viewport: { width: 1440, height: 900 } });

@@ -7,7 +7,7 @@
   var L = g.DomiaLib, esc = L.esc, tx = L.tx, icon = L.icon, fill = L.fill, money = L.money;
 
   // Bump when css/site.css or js/site.js change, so browsers fetch the new files.
-  var ASSET_VERSION = '20261117e';
+  var ASSET_VERSION = '20261118a';
 
   // Site photography in assets/img (name: [width, height] of the large file).
   var IMG = {
@@ -59,7 +59,7 @@
     var site = ctx.site, t = ctx.t, s = '';
     var canonical = L.abs(site, ctx.file);
     var ogImage = o.image || 'assets/brand/og-cover.jpg';
-    s += '<!doctype html>\n<html lang="' + ctx.lang + '">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n';
+    s += '<!doctype html>\n<html lang="' + ctx.lang + '">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<meta name="color-scheme" content="only light">\n<meta name="darkreader-lock">\n';
     s += '<title>' + esc(o.title) + '</title>\n<meta name="description" content="' + esc(o.desc || '') + '">\n';
     if (o.noindex) s += '<meta name="robots" content="noindex">\n';
     if (canonical && !o.noindex) {
