@@ -282,7 +282,13 @@ ok('movement: the progress line follows the scroll', await D.evaluate(async () =
 ok('movement: nothing is left invisible at the end of the page', await D.evaluate(async () => { for (let y = 0; y <= document.documentElement.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 80)); } await new Promise(r => setTimeout(r, 1600)); return [...document.querySelectorAll('.rv')].filter(e => !e.closest('[hidden]') && getComputedStyle(e).opacity !== '1').length; }) === 0);
 const R = await newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
 await R.goto(BASE + 'index.html', { waitUntil: 'load' }); await R.waitForTimeout(600);
-ok('movement: with "reduce motion" switched on, everything is simply shown', await R.evaluate(() => document.querySelectorAll('.rv').length === 0 && !document.querySelector('[data-hero-video]').currentSrc && getComputedStyle(document.querySelector('.owners-teaser .dfig')).opacity === '1'));
+await R.waitForTimeout(2600);
+ok('movement: with "reduce motion" on, only gentle effects run: the video, fades, the gold shimmer and the gold line', await R.evaluate(() => {
+  const gentle = new Set(['rm-fade', 'rm-shine', 'rm-ring']), names = document.getAnimations().map(a => a.animationName).filter(Boolean);
+  const v = document.querySelector('[data-hero-video]');
+  return names.length > 0 && names.every(n => gentle.has(n)) && !v.paused && v.classList.contains('is-on') && [...document.querySelectorAll('.rv')].every(e => getComputedStyle(e).transform === 'none');
+}), 'animations: ' + await R.evaluate(() => [...new Set(document.getAnimations().map(a => a.animationName))].join(' ')));
+ok('movement: with "reduce motion" on, things still fade in and end up fully shown', await R.evaluate(async () => { for (let y = 0; y <= document.documentElement.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 80)); } await new Promise(r => setTimeout(r, 1400)); return document.querySelectorAll('.rv').length > 0 && [...document.querySelectorAll('.rv')].filter(e => !e.closest('[hidden]') && getComputedStyle(e).opacity !== '1').length === 0; }));
 await R.context().close();
 await D.goto(BASE + '404.html', { waitUntil: 'load' });
 ok('missing-page screen offers a way back', (await D.locator('main a.btn').count()) === 2);
@@ -379,10 +385,17 @@ for (const style of ['window', 'cinematic']) {
     await P.context().close();
   }
 }
-{ // with reduced motion the window and its gold line are simply there, finished
-  const P = await newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
-  await P.goto(BASE + 'index.html', { waitUntil: 'load' });
-  ok('home: with reduced motion the gold line around the D shows at once, without animation', await P.evaluate(() => { const r = document.querySelector('.hero__ring'); return !r || (getComputedStyle(r).getPropertyValue('--ring').trim() === '360deg' && document.getAnimations().filter(a => a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.hero__stage')).length === 0); }));
+{ // the pause button on the home page video, and the play button where the phone blocks autoplay
+  const P = await newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  await P.addInitScript(() => { const real = HTMLMediaElement.prototype.play; let first = true; HTMLMediaElement.prototype.play = function () { if (first) { first = false; return Promise.reject(new DOMException('blocked', 'NotAllowedError')); } return real.call(this); }; });
+  for (const [f, play] of [['index.html', 'Play the video'], ['index.es.html', 'Reproducir el vídeo']]) {
+    await P.goto(BASE + f, { waitUntil: 'load' }); await P.waitForTimeout(1200);
+    const st = () => P.evaluate(() => { const v = document.querySelector('[data-hero-video]'); return { playing: !v.paused, label: document.querySelector('[data-video-toggle]').getAttribute('aria-label') }; });
+    const blocked = await st();
+    await P.tap('[data-video-toggle]'); await P.waitForTimeout(1200); const started = await st();
+    await P.tap('[data-video-toggle]'); await P.waitForTimeout(300); const paused = await st();
+    ok(`home video button (${f}): where autoplay is blocked it offers play, starts the video on a tap and pauses it on the next`, !blocked.playing && blocked.label === play && started.playing && paused.label === play && !paused.playing, JSON.stringify([blocked, started, paused]));
+  }
   await P.context().close();
 }
 

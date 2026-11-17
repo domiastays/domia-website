@@ -31,6 +31,7 @@
     },
 
     home: {
+      videoPause: "Pause the video", videoPlay: "Play the video",
       title: "Holiday apartments in Benidorm | Domia Stays",
       desc: "Holiday apartments in Benidorm, managed by a local team. See the homes, check the details and ask about your dates on WhatsApp.",
       browse: "See the homes",
@@ -387,6 +388,7 @@
     },
 
     home: {
+      videoPause: "Pausar el vídeo", videoPlay: "Reproducir el vídeo",
       title: "Apartamentos vacacionales en Benidorm | Domia Stays",
       desc: "Apartamentos vacacionales en Benidorm gestionados por un equipo local. Mira los alojamientos y consulta tus fechas por WhatsApp.",
       browse: "Ver los alojamientos",
