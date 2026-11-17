@@ -6,7 +6,8 @@ const BASE = (process.env.SITE_URL || 'http://127.0.0.1:8765/').replace(/\/?$/, 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const launch = () => chromium.launch({ ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : { channel: 'chrome' }), args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] });
 const require = createRequire(import.meta.url);
-require('../lib.js'); const COPY = require('../copy.js');
+require('../lib.js'); const TEXTS = fs.existsSync(ROOT + '/content/texts.json') ? JSON.parse(fs.readFileSync(ROOT + '/content/texts.json', 'utf8')) : null;
+const COPY = globalThis.DomiaLib.applyTexts(require('../copy.js'), TEXTS);
 const results = [];
 const L_esc = (x) => globalThis.DomiaLib.esc(x);
 const ok = (name, cond, extra = '') => { results.push({ name, pass: !!cond, extra }); if (!cond) console.log('FAIL ' + name + (extra ? '  — ' + extra : '')); };
@@ -364,8 +365,8 @@ ok('no page loads anything from another website (so no consent banner is needed)
 /* ---------- the other home page styles (built in memory, served in place of the home page) ---------- */
 require('../templates.js'); const { generate } = require('../generate.js');
 const readJson = (f) => JSON.parse(fs.readFileSync(ROOT + '/content/' + f, 'utf8'));
-for (const style of ['letter', 'window', 'cinematic']) {
-  const built = generate({ site: { ...site, heroStyle: style }, properties: readJson('properties.json'), reviews: readJson('reviews.json') }).files;
+for (const style of ['window', 'cinematic']) {
+  const built = generate({ site: { ...site, heroStyle: style }, properties: readJson('properties.json'), reviews: readJson('reviews.json'), texts: TEXTS }).files;
   for (const [label, opts] of [['desktop', { viewport: { width: 1440, height: 900 } }], ['phone', { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }]]) {
     const P = await newPage(opts);
     for (const f of ['index.html', 'index.es.html']) await P.route(BASE + '__style-' + f, r => r.fulfill({ contentType: 'text/html', body: built[f] }));
@@ -373,36 +374,13 @@ for (const style of ['letter', 'window', 'cinematic']) {
       await P.goto(BASE + '__style-' + f, { waitUntil: 'load' }); await P.waitForTimeout(300);
       ok(`home style ${style} (${f}, ${label}): no errors and nothing wider than the screen`, !P.__errors.length && await P.evaluate(() => document.documentElement.scrollWidth <= innerWidth), P.__errors.join('; '));
     }
-    if (style === 'letter') {
-      // every corner of the video's outline sits on the gold letter, so the gold always covers the edge of the video
-      ok(`home style letter (${label}): the gold D covers the edge of the video all the way round`, await P.evaluate(() => {
-        const st = document.querySelector('.hero__stage--letter'), clip = document.querySelector('.hero__dclip'), svg = document.querySelector('svg.dl'), gold = svg && svg.querySelector('.dl__fill');
-        if (!st || !gold || !clip.contains(document.querySelector('[data-hero-video]'))) return false;
-        const vb = svg.viewBox.baseVal, poly = getComputedStyle(clip).clipPath.match(/[\d.]+% [\d.]+%/g) || [];
-        return poly.length > 40 && poly.every(pt => { const [x, y] = pt.split(' ').map(parseFloat); return gold.isPointInFill(new DOMPoint(x / 100 * vb.width, y / 100 * vb.height)); });
-      }));
-      ok(`home style letter (${label}): the D keeps the letter's proportions and fits the screen with its seal`, await P.evaluate((tag) => {
-        const b = document.querySelector('.hero__stage--letter').getBoundingClientRect(), seal = document.querySelector('.hero__stage--letter .seal'), sb = seal.getBoundingClientRect();
-        return Math.abs(b.width / b.height - 616.6 / 691) < .01 && b.left >= 0 && sb.right <= innerWidth && sb.left >= 0 && seal.textContent.includes(tag) && seal.querySelector('img').getAttribute('src') === 'assets/brand/monogram-gold.svg';
-      }, site.tagline));
-      if (label === 'desktop') {
-        ok('home style letter: the gold D stays still while the picture shifts behind it', await (async () => {
-          const read = () => P.evaluate(() => { const c = document.querySelector('.hero__dclip'), b = c.getBoundingClientRect(), g = document.querySelector('svg.dl').getBoundingClientRect(), m = document.querySelector('.hero__media'), v = m.querySelector('video').getBoundingClientRect(); return { box: [b.left, b.top, b.right, b.bottom, g.left, g.top, g.right, g.bottom].join(), covers: v.left <= b.left && v.top <= b.top && v.right >= b.right && v.bottom >= b.bottom, mt: getComputedStyle(m).transform }; });
-          await P.mouse.move(700, 400); await P.waitForTimeout(1300); const a = await read(); let good = a.covers;
-          for (const [x, y] of [[1430, 90], [1430, 700], [760, 700]]) { await P.mouse.move(x, y, { steps: 4 }); await P.waitForTimeout(1300); const b = await read(); good = good && b.box === a.box && b.covers && b.mt !== a.mt; }
-          return good;
-        })());
-      }
-    }
     await P.context().close();
   }
 }
-{ // with reduced motion the D is simply there, finished
+{ // with reduced motion the window and its gold line are simply there, finished
   const P = await newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
-  const built = generate({ site: { ...site, heroStyle: 'letter' }, properties: readJson('properties.json'), reviews: readJson('reviews.json') }).files;
-  await P.route(BASE + '__style-index.html', r => r.fulfill({ contentType: 'text/html', body: built['index.html'] }));
-  await P.goto(BASE + '__style-index.html', { waitUntil: 'load' });
-  ok('home style letter: with reduced motion the gold D shows at once, without animation', await P.evaluate(() => getComputedStyle(document.querySelector('.dl__fill')).opacity === '1' && document.getAnimations().filter(a => a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.hero__stage')).length === 0));
+  await P.goto(BASE + 'index.html', { waitUntil: 'load' });
+  ok('home: with reduced motion the gold line around the D shows at once, without animation', await P.evaluate(() => { const r = document.querySelector('.hero__ring'); return !r || (getComputedStyle(r).getPropertyValue('--ring').trim() === '360deg' && document.getAnimations().filter(a => a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.hero__stage')).length === 0); }));
   await P.context().close();
 }
 

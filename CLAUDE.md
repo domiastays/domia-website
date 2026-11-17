@@ -20,7 +20,7 @@ Run both tests (`build/tests/README.md`). They cover every link, both languages,
 ## Rules that come from the business
 
 - Brand: navy `#0F2740`, gold `#B08547`, Cormorant Garamond for headings, DM Sans for text. Use only the official logo files in `assets/brand`; never redraw or recolour the logo. The tagline is exactly "Feel at home, anywhere".
-- The company is "Domia Stays Group S.L." (legal lines) or "Domia Stays". Never add a place name to the brand.
+- The company that runs this site is **Domia Stays S.L.** (the name on its tax card), used in legal lines; in running text it is "Domia Stays". Domia Stays Group is the umbrella group the owner is setting up above it (the logo reads "Domia Stays Group"). Never add a place name to the brand.
 - Commission is 20% of **net** revenue, after platform fees. Do not restate it as a share of gross, and do not change fees, contract terms or compliance wording without the owner's say-so.
 - Real photos only. No AI-generated property images. No invented reviews: `content/reviews.json` holds real guest reviews with their source, and the reviews sections stay hidden while it is empty.
 - Each home should show its tourist licence number (`licence` field).

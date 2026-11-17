@@ -1,6 +1,6 @@
 # Domia Stays website
 
-The website of Domia Stays Group S.L.: holiday homes in Benidorm, in English and Spanish.
+The website of Domia Stays (Domia Stays S.L.): holiday homes in Benidorm, in English and Spanish.
 
 It is a plain static site. No server, no database, no monthly platform. GitHub Pages serves the files in this folder as they are.
 
@@ -13,7 +13,7 @@ It is a plain static site. No server, no database, no monthly platform. GitHub P
 | Add, edit, hide or remove a home | Open `admin/index.html` in Chrome, make the change, **Save**, then publish |
 | Change the phone, email, check-in times or web address | Same manager, **Settings** tab |
 | Change the company details on the legal notice and privacy policy (name, tax number, address, registry) | Same manager, **Settings**, *Company* |
-| Change the home page style (gold D, D-shaped window, or full-screen video) | Same manager, **Settings**, *Home page style* |
+| Change the home page style (D-shaped window or full-screen video) | Same manager, **Settings**, *Home page style* |
 | Add a real guest review | Same manager, **Reviews** tab |
 | Change other text (home page, owners page, FAQ) | Edit `build/copy.js`, then save anything in the manager to rebuild |
 | Publish | GitHub Desktop: **Commit to main**, then **Push origin** |

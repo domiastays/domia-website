@@ -163,6 +163,29 @@ await page.click('#save-all'); await saved();
 ok('settings change reaches the pages', (await read(`properties_${P[0].id}.html`)).includes('by 11:00') && JSON.parse(await read('content/site.json')).checkOutBy === '11:00');
 await page.fill('[data-s=checkOutBy]', '10:00'); await page.click('#save-all'); await saved();
 
+// 8b. texts: change a sentence, find one by its words, put both back
+await page.click('[data-tab=texts]');
+await page.click('[data-act=t-group][data-g=legal]');
+await page.fill('[data-tx="legal.h1"] textarea[data-t=en]', 'Legal notice, test wording');
+await page.fill('[data-tx="legal.h1"] textarea[data-t=es]', 'Aviso legal, texto de prueba');
+ok('a changed sentence is marked and can be undone', await page.locator('[data-tx="legal.h1"].tx--changed [data-act=t-reset]').isVisible());
+await page.fill('[data-tfind]', 'check-out is by');
+ok('find a sentence: typing words from the site finds it', (await page.locator('[data-tx="guest.faq.0.1"]').count()) === 1 && (await page.locator('.tx').count()) <= 4, String(await page.locator('.tx').count()));
+await page.fill('[data-tx="guest.faq.0.1"] textarea[data-t=en]', 'Check-in is in the afternoon.');
+ok('warns when a {placeholder} is removed', await page.locator('[data-tx="guest.faq.0.1"] .tx__warn').isVisible() && /\{from\}/.test(await page.textContent('[data-tx="guest.faq.0.1"] .tx__warn')));
+await page.click('[data-tx="guest.faq.0.1"] [data-act=t-reset]');
+await shot('05b-texts.png', { fullPage: true });
+await page.click('#save-all'); await saved();
+const tj = JSON.parse(await read('content/texts.json') || '{}');
+ok('changed text is saved in content/texts.json, and only what changed', tj.en && tj.en['legal.h1'] === 'Legal notice, test wording' && tj.es['legal.h1'] === 'Aviso legal, texto de prueba' && Object.keys(tj.en).length === 1 && Object.keys(tj.es).length === 1, JSON.stringify(tj));
+ok('changed text reaches the pages in both languages', (await read('legal.html') || '').includes('<h1 class="h1">Legal notice, test wording</h1>') && (await read('legal.es.html') || '').includes('Aviso legal, texto de prueba'));
+await page.fill('[data-tfind]', '');
+await page.click('[data-act=t-group][data-g=legal]');
+await page.click('[data-tx="legal.h1"] [data-act=t-reset]');
+await page.click('#save-all'); await saved();
+const tj2 = JSON.parse(await read('content/texts.json') || '{}');
+ok('back to the original text: the change is gone from the file and the page', Object.keys(tj2.en || {}).length === 0 && (await read('legal.html') || '').includes('<h1 class="h1">Legal notice</h1>'));
+
 // 9. reviews
 await page.click('[data-tab=reviews]');
 await page.click('[data-act=rev-new]');

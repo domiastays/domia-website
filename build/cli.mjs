@@ -15,7 +15,8 @@ require('./lib.js'); require('./copy.js'); require('./templates.js');
 const { generate, HOME_PAGE_PATTERN } = require('./generate.js');
 
 const read = (f) => JSON.parse(fs.readFileSync(path.join(root, 'content', f), 'utf8'));
-const out = generate({ site: read('site.json'), properties: read('properties.json'), reviews: read('reviews.json') });
+const texts = fs.existsSync(path.join(root, 'content', 'texts.json')) ? read('texts.json') : null;
+const out = generate({ site: read('site.json'), properties: read('properties.json'), reviews: read('reviews.json'), texts });
 
 let written = 0;
 for (const [name, text] of Object.entries(out.files)) {

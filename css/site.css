@@ -133,7 +133,7 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
 .sec--line > .split.wrap::before{margin-bottom:clamp(16px,2vw,24px)}
 
 /* ---------- home: hero (the video plays inside the D-shaped window) ---------- */
-@property --ring{syntax:"<angle>";inherits:false;initial-value:180deg}
+@property --ring{syntax:"<angle>";inherits:false;initial-value:360deg}
 .eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:clamp(16px,2vw,26px);font-size:.74rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-light)}
 .eyebrow::before{content:"";flex:none;width:36px;height:1px;background:var(--gold-grad);transform-origin:left}
 .hl{font-family:var(--serif);font-weight:500;font-size:clamp(2.3rem,11.6vw,3.4rem);line-height:.98;letter-spacing:-.016em;color:#fff}
@@ -151,28 +151,22 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
 .hero__copy{order:2}
 .hero__copy .lead{margin-top:clamp(18px,2vw,26px);max-width:30em}
 /* every D on the site keeps the proportions of a real D: about as wide as it is tall, never stretched */
-.hero__stage{position:relative;aspect-ratio:1.04;width:min(calc(100% + var(--gutter) - 22px),calc(clamp(230px,40vh,420px)*1.04));margin-left:calc(var(--gutter)*-1);--px:0;--py:0}
+.hero__stage{position:relative;aspect-ratio:1.04;width:min(calc(100% - 24px),calc(clamp(230px,40vh,420px)*1.04));margin-left:12px;--px:0;--py:0}
 .hero__window{position:relative;height:100%;overflow:hidden;isolation:isolate;border-radius:0 999px 999px 0;background:var(--navy-deep);box-shadow:0 44px 80px -52px rgba(3,10,20,.95)}
 .hero__window::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(15,39,64,0) 58%,rgba(15,39,64,.36));pointer-events:none}
 /* "Logo" home page style: the video shows inside the D of the official monogram. The stage is exactly the box of the D
    in assets/brand/monogram-gold.svg; the polygon is the inside of that D, taken from the same file and running along the
    middle of the gold stroke, so the mark laid on top always covers the edge. The logo file itself is not altered. */
-/* home page style "letter": the video inside a slim gold D (markup and shape in build/templates.js) */
-.hero__stage--letter{aspect-ratio:616.6/691;justify-self:center;width:min(100% - 56px,calc(clamp(250px,44vh,420px)*.8923));margin:0 auto}
-.hero__dclip{position:absolute;inset:0;overflow:hidden;isolation:isolate;clip-path:polygon(43.56% 94.48%, 46.45% 94.32%, 49.26% 94.07%, 51.34% 93.80%, 54.03% 93.37%, 56.65% 92.82%, 58.59% 92.34%, 61.08% 91.62%, 63.52% 90.79%, 65.88% 89.86%, 67.61% 89.08%, 69.82% 87.98%, 71.42% 87.07%, 73.45% 85.79%, 74.92% 84.75%, 76.77% 83.29%, 78.11% 82.12%, 79.80% 80.49%, 81.38% 78.75%, 82.85% 76.92%, 84.23% 74.99%, 85.20% 73.47%, 86.08% 71.91%, 87.13% 69.76%, 87.83% 68.08%, 88.46% 66.34%, 89.17% 63.97%, 89.62% 62.13%, 89.99% 60.24%, 90.36% 57.66%, 90.55% 55.65%, 90.68% 52.92%, 90.70% 50.86%, 90.60% 48.25%, 90.38% 45.71%, 90.04% 43.20%, 89.56% 40.76%, 89.12% 38.95%, 88.43% 36.60%, 87.61% 34.30%, 86.66% 32.05%, 85.86% 30.39%, 84.69% 28.24%, 83.40% 26.15%, 82.01% 24.16%, 80.51% 22.25%, 79.31% 20.87%, 77.64% 19.12%, 76.30% 17.85%, 74.43% 16.25%, 72.46% 14.74%, 70.40% 13.32%, 68.22% 11.99%, 66.51% 11.04%, 64.17% 9.90%, 62.34% 9.13%, 60.47% 8.43%, 57.91% 7.62%, 55.91% 7.09%, 53.21% 6.51%, 51.10% 6.15%, 48.24% 5.80%, 46.02% 5.61%, 43.01% 5.49%, 40.40% 5.47%, 37.39% 5.55%, 34.66% 5.70%, 32.58% 5.91%, 30.36% 6.23%, 28.70% 6.57%, 26.97% 7.06%, 25.70% 7.56%, 24.75% 8.12%, 23.93% 8.78%, 23.07% 9.74%, 22.49% 10.66%, 22.03% 11.67%, 21.61% 13.04%, 21.39% 14.28%, 21.25% 15.94%, 21.24% 81.77%, 21.35% 83.97%, 21.71% 85.96%, 22.03% 87.03%, 22.53% 88.24%, 23.03% 89.16%, 23.62% 89.99%, 24.45% 90.92%, 25.22% 91.59%, 25.94% 92.08%, 26.99% 92.62%, 27.91% 92.99%, 29.25% 93.40%, 30.74% 93.75%, 32.39% 94.03%, 34.20% 94.25%, 36.17% 94.41%, 40.61% 94.53%)}
-.hero__dclip .hero__media::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(15,39,64,0) 56%,rgba(15,39,64,.4));pointer-events:none}
-.hero__dclip .hero__media img,.hero__dclip .hero__media video{object-position:44% 50%}
-.dl{position:absolute;inset:0;z-index:2;width:100%;height:100%;overflow:visible;pointer-events:none;filter:drop-shadow(0 16px 24px rgba(3,10,20,.5))}
-.dl__echo{fill:none;stroke:rgba(225,209,185,.5);stroke-width:1.5}
-.dl__line{fill:none;stroke:#D6BC8E;stroke-width:1.8;opacity:0}
-.dl__sheen{opacity:0}
-.hero__stage--letter .seal{left:auto;right:-30px;bottom:-14px;width:92px;height:92px}
 /* the picture is a little larger than the window, so it can shift behind the frame while the frame itself stays still */
 .hero__media{position:absolute;inset:-14px}
 .hero__media img,.hero__media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:40% 50%}
 .hero__media video{opacity:0;transition:opacity .9s ease}
 .hero__media video.is-on{opacity:1}
-.hero__ring{position:absolute;inset:-12px -12px -12px 24%;border:1px solid rgba(225,209,185,.6);border-left:0;border-radius:0 999px 999px 0;pointer-events:none;-webkit-mask-image:conic-gradient(from 0deg at 0% 50%,#000 var(--ring,180deg),transparent 0);mask-image:conic-gradient(from 0deg at 0% 50%,#000 var(--ring,180deg),transparent 0)}
+/* the fine gold line runs round the whole D, drawn from the middle of the straight side and back to it */
+.hero__ring{position:absolute;inset:-12px;border:1px solid rgba(225,209,185,.62);border-radius:0 999px 999px 0;pointer-events:none;-webkit-mask-image:conic-gradient(from 270deg at 50% 50%,#000 var(--ring,360deg),transparent 0);mask-image:conic-gradient(from 270deg at 50% 50%,#000 var(--ring,360deg),transparent 0)}
+.hero__gem{position:absolute;left:-12px;z-index:1;width:9px;height:9px;margin:-4px 0 0 -4px;transform:rotate(45deg);background:linear-gradient(135deg,#EADBBE,#B08547 55%,#8A6531);box-shadow:0 0 0 3px rgba(15,39,64,.9),0 0 12px rgba(225,209,185,.35);pointer-events:none}
+.hero__gem--t{top:-12px}
+.hero__gem--b{top:calc(100% + 12px)}
 .seal{position:absolute;left:var(--gutter);bottom:-38px;display:grid;place-items:center;width:100px;height:100px;border-radius:50%;background:var(--navy);box-shadow:0 0 0 1px rgba(225,209,185,.32),0 20px 36px -18px rgba(3,10,20,.95)}
 .seal svg{position:absolute;inset:0;width:100%;height:100%}
 .seal text{font-family:var(--serif);font-style:italic;font-size:12.5px;fill:var(--gold-light)}
@@ -182,8 +176,6 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
   .hl{font-size:clamp(3.4rem,1rem + 4.6vw,5.4rem)}
   .hero__copy{order:0}
   .hero__stage{justify-self:end;width:min(calc(100% - 14px),calc(clamp(340px,66vh,620px)*1.04));margin:0 14px 0 0}
-  .hero__stage--letter{justify-self:center;width:min(100% - 60px,calc(clamp(380px,72vh,640px)*.8923));margin:0}
-  .hero__stage--letter .seal{right:-66px;bottom:6%;width:124px;height:124px}
   .seal{left:-66px;bottom:9%;width:132px;height:132px}
 }
 /* the search, under the homes */
@@ -199,13 +191,10 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
 }
 @media (prefers-reduced-motion:no-preference){
   .hero__media{animation:window-open 1.3s cubic-bezier(.2,.7,.2,1) .1s backwards}
-  .hero__stage--letter .hero__media{animation-delay:1s;animation-duration:1.5s}
-  .dl__line{stroke-dasharray:1;animation:dl-draw 2.7s cubic-bezier(.6,0,.3,1) .1s both}
-  .dl__fill{animation:dl-fill 1.2s ease .95s backwards}
-  .dl__echo{stroke-dasharray:1;animation:dl-echo 2.2s cubic-bezier(.65,0,.2,1) 1.1s both}
-  .dl__sheen{animation:dl-sheen 9s cubic-bezier(.45,0,.25,1) 3.4s infinite}
   .hero__media img,.hero__media video{animation:drift 26s ease-in-out infinite alternate}
-  .hero__ring{animation:ring-draw 2s cubic-bezier(.65,0,.2,1) .75s both}
+  .hero__ring{animation:ring-draw 2.6s cubic-bezier(.65,0,.2,1) .6s both}
+  .hero__gem{animation:gem-in .6s cubic-bezier(.2,.7,.2,1.4) 1.45s both}
+  .hero__gem--b{animation-delay:2.4s}
   .seal{animation:seal-in .9s cubic-bezier(.2,.7,.2,1) 1.7s both}
   .seal svg{animation:spin 34s linear infinite}
   .hl .ln > span{transform:translateY(118%);animation:line-up 1.15s cubic-bezier(.2,.7,.2,1) .2s forwards}
@@ -217,13 +206,10 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
   .eyebrow::before{animation:grow-x 1.1s cubic-bezier(.2,.7,.2,1) .35s both}
   .hero__copy .lead,.cine__in .lead{animation-delay:.7s}
   .hero__copy .btns,.cine__in .btns{animation-delay:.85s}
-  @keyframes dl-draw{0%{stroke-dashoffset:1;opacity:1}55%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
-  @keyframes dl-fill{from{opacity:0}}
-  @keyframes dl-echo{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
-  @keyframes dl-sheen{0%{opacity:1;transform:translateX(0)}26%{opacity:1;transform:translateX(1000px)}27%,100%{opacity:0;transform:translateX(1000px)}}
 @keyframes window-open{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  @keyframes ring-draw{from{--ring:0deg}to{--ring:180deg}}
+  @keyframes ring-draw{from{--ring:0deg}to{--ring:360deg}}
+  @keyframes gem-in{from{opacity:0;transform:rotate(45deg) scale(0)}to{opacity:1;transform:rotate(45deg) scale(1)}}
   @keyframes seal-in{from{opacity:0;scale:.7}to{opacity:1;scale:1}}
   @keyframes spin{to{transform:rotate(360deg)}}
   @keyframes line-up{to{transform:none}}
@@ -239,10 +225,10 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
   }
 }
 @media (prefers-reduced-motion:no-preference) and (hover:hover) and (pointer:fine){
-  .hero__media,.hero__ring,.seal,.dl__echo{transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
+  .hero__media,.hero__ring,.hero__gem,.seal{transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
   .hero__media{transform:translate3d(calc(var(--px)*-10px),calc(var(--py)*-8px),0)}
-  .hero__ring{transform:translate3d(calc(var(--px)*7px),calc(var(--py)*5px),0)}
-  .dl__echo{transform:translate(calc(var(--px)*6px),calc(var(--py)*5px))}
+  .hero__ring{transform:translate3d(calc(var(--px)*6px),calc(var(--py)*4px),0)}
+  .hero__gem{transform:translate3d(calc(var(--px)*6px),calc(var(--py)*4px),0) rotate(45deg)}
   .seal{transform:translate3d(calc(var(--px)*-12px),calc(var(--py)*-9px),0)}
 }
 

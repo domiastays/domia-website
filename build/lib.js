@@ -32,6 +32,28 @@
     return String(str).replace(/\{(\w+)\}/g, function (m, k) { return vars[k] == null ? m : vars[k]; });
   }
 
+  // Site text changed in the property manager (Texts tab) is kept in content/texts.json as
+  // { "en": { "home.h1": "…" }, "es": { … } }, each key the path of a sentence in build/copy.js.
+  // applyTexts lays those changes over the built-in text. Only existing sentences can change:
+  // unknown paths, empty values and the locked ones (names that link pages and photos) are ignored.
+  var TEXT_LOCKED = /^benidorm\.areas\.\d+\.(key|img)$|^benidorm\.pics\.\d+\.0$/;
+  function applyTexts(copy, texts) {
+    if (!texts) return copy;
+    var out = JSON.parse(JSON.stringify(copy));
+    LANGS.forEach(function (lang) {
+      var changes = texts[lang] || {};
+      Object.keys(changes).forEach(function (path) {
+        var v = changes[path];
+        if (typeof v !== 'string' || !v.trim() || TEXT_LOCKED.test(path)) return;
+        var parts = path.split('.'), node = out[lang];
+        for (var i = 0; i < parts.length - 1; i++) { if (node == null || typeof node !== 'object') return; node = node[parts[i]]; }
+        var last = parts[parts.length - 1];
+        if (node && typeof node === 'object' && typeof node[last] === 'string') node[last] = v;
+      });
+    });
+    return out;
+  }
+
   function money(n) {
     var v = Math.round(Number(n) || 0);
     return '€' + String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -202,7 +224,7 @@
   }
 
   var api = {
-    LANGS: LANGS, esc: esc, tx: tx, slugify: slugify, fill: fill, money: money,
+    LANGS: LANGS, applyTexts: applyTexts, TEXT_LOCKED: TEXT_LOCKED, esc: esc, tx: tx, slugify: slugify, fill: fill, money: money,
     pageFile: pageFile, homeFile: homeFile, photoSmall: photoSmall, photoPath: photoPath,
     waLink: waLink, telLink: telLink, mapsLink: mapsLink, abs: abs, icon: icon,
     AMENITIES: AMENITIES, AMENITY_BY_KEY: AMENITY_BY_KEY, HOME_TYPES: HOME_TYPES,

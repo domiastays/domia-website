@@ -109,6 +109,22 @@ dialog::backdrop{background:rgba(8,20,34,.55)}
 .help ol{list-style:decimal;padding-left:22px}
 .help ul{list-style:disc;padding-left:22px}
 .help li{margin:6px 0}
+/* texts */
+.texts{display:grid;gap:20px;align-items:start}
+.texts__nav{display:flex;flex-wrap:wrap;gap:6px}
+.texts__nav button{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:38px;padding:7px 12px;border:1px solid var(--rule);border-radius:10px;background:#fff;text-align:left;font-size:.92rem}
+.texts__nav button[aria-current=true]{border-color:var(--navy);background:var(--navy);color:var(--gold-light)}
+.texts__nav b{min-width:22px;padding:0 6px;border-radius:999px;background:var(--gold);color:var(--navy);font-size:.75rem;text-align:center}
+.texts__find input{font-size:1rem}
+.tx{display:grid;gap:8px;padding:16px;background:#fff;border:1px solid var(--rule);border-radius:14px}
+.tx--changed{border-color:var(--gold);box-shadow:inset 4px 0 0 var(--gold)}
+.tx__top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px}
+.tx__label{font-size:.82rem;font-weight:600;color:var(--soft)}
+.tx__undo{padding:2px 0;border:0;background:none;color:var(--navy);font-size:.85rem;text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
+.tx textarea{min-height:0;line-height:1.5;overflow:hidden;resize:none}
+.tx__warn{font-size:.85rem;font-weight:500;color:var(--bad)}
+.tx-list{display:grid;gap:12px}
+@media (min-width:960px){.texts{grid-template-columns:230px 1fr}.texts__nav{position:sticky;top:130px;flex-direction:column;flex-wrap:nowrap}}
 code{padding:1px 6px;border-radius:6px;background:rgba(15,39,64,.08);font-size:.9em}
 </style>
 </head>
@@ -124,6 +140,7 @@ code{padding:1px 6px;border-radius:6px;background:rgba(15,39,64,.08);font-size:.
   </div>
   <nav class="tabs" id="tabs" hidden><div class="wrap" role="tablist">
     <button type="button" role="tab" data-tab="homes">Homes</button>
+    <button type="button" role="tab" data-tab="texts">Texts</button>
     <button type="button" role="tab" data-tab="reviews">Reviews</button>
     <button type="button" role="tab" data-tab="settings">Settings</button>
     <button type="button" role="tab" data-tab="help">Help and publishing</button>
@@ -146,7 +163,7 @@ code{padding:1px 6px;border-radius:6px;background:rgba(15,39,64,.08);font-size:.
   var e = L.esc;
   var view = $('#view');
 
-  var state = { root: null, site: null, homes: [], reviews: [], dirty: false, tab: 'homes', editing: null, draft: null, removedIds: [], urls: {}, errors: {} };
+  var state = { root: null, site: null, homes: [], reviews: [], texts: { en: {}, es: {} }, textsFile: false, textGroup: 'home', textFind: '', dirty: false, tab: 'homes', editing: null, draft: null, removedIds: [], urls: {}, errors: {} };
 
   /* ---------------- small helpers ---------------- */
   function toast(msg, bad) {
@@ -228,6 +245,8 @@ code{padding:1px 6px;border-radius:6px;background:rgba(15,39,64,.08);font-size:.
     var r = { reviews: [] };
     try { r = JSON.parse(await fs.readText('content/reviews.json')); } catch (x) { /* optional */ }
     state.reviews = r.reviews || [];
+    state.texts = { en: {}, es: {} }; state.textsFile = false;
+    try { var tj = JSON.parse(await fs.readText('content/texts.json')); state.texts = { en: tj.en || {}, es: tj.es || {} }; state.textsFile = true; } catch (x) { /* no changed text yet */ }
     state.dirty = false; state.removedIds = []; state.urls = {}; state.editing = null; state.draft = null; state.tab = 'homes';
     try { await idb('readwrite', function (s) { return s.put(handle, 'dir'); }); } catch (x) { /* remembering the folder is a convenience */ }
     render();
@@ -295,8 +314,10 @@ code{padding:1px 6px;border-radius:6px;background:rgba(15,39,64,.08);font-size:.
       await fs.write('content/site.json', JSON.stringify(site, null, 2));
       await fs.write('content/properties.json', JSON.stringify(props, null, 2));
       await fs.write('content/reviews.json', JSON.stringify(revs, null, 2));
+      var texts = { version: 1, en: sortKeys(state.texts.en), es: sortKeys(state.texts.es) };
+      if (state.textsFile || Object.keys(texts.en).length || Object.keys(texts.es).length) { await fs.write('content/texts.json', JSON.stringify(texts, null, 2)); state.textsFile = true; }
       // 3. pages
-      var out = Build.generate({ site: site, properties: props, reviews: revs });
+      var out = Build.generate({ site: site, properties: props, reviews: revs, texts: texts });
       var changed = 0, names = Object.keys(out.files);
       for (var n = 0; n < names.length; n++) if (await fs.writeTextIfChanged(names[n], out.files[names[n]])) changed++;
       // 4. tidy up: pages of removed or hidden homes, photos no longer used, folders of deleted homes
@@ -339,6 +360,7 @@ code{padding:1px 6px;border-radius:6px;background:rgba(15,39,64,.08);font-size:.
     renderChrome();
     if (!state.root) return renderConnect();
     if (state.tab === 'homes') return state.draft ? renderEditor() : renderHomes();
+    if (state.tab === 'texts') return renderTexts();
     if (state.tab === 'reviews') return renderReviews();
     if (state.tab === 'settings') return renderSettings();
     return renderHelp();
@@ -515,21 +537,134 @@ code{padding:1px 6px;border-radius:6px;background:rgba(15,39,64,.08);font-size:.
     var s = state.site;
     function f(label, key, hint, ph) { return '<label><span>' + label + '</span><input type="text" data-s="' + key + '" value="' + e(s[key] || '') + '"' + (ph ? ' placeholder="' + e(ph) + '"' : '') + '>' + (hint ? '<span class="hint">' + hint + '</span>' : '') + '</label>'; }
     var h = '<div class="stack"><div><h1>Settings</h1><p class="lead">Details used on every page. Change them here once and save.</p></div>';
-    h += '<fieldset class="card stack"><legend>Website</legend>' + f('Website address', 'url', 'With https:// and no slash at the end. Used for Google, the sitemap and link previews on WhatsApp.', 'https://domiastays.es') + '<label><span>Home page style</span><select data-s="heroStyle"><option value="window"' + (s.heroStyle !== 'cinematic' && s.heroStyle !== 'letter' ? ' selected' : '') + '>Signature: video inside the D-shaped window, beside the headline</option><option value="letter"' + (s.heroStyle === 'letter' ? ' selected' : '') + '>Gold D: video inside a slim gold letter D, beside the headline</option><option value="cinematic"' + (s.heroStyle === 'cinematic' ? ' selected' : '') + '>Cinematic: full-screen video behind the headline</option></select><span class="hint">All three use the same homes and text. Switch, save, and look at the home page.</span></label></fieldset>';
+    h += '<fieldset class="card stack"><legend>Website</legend>' + f('Website address', 'url', 'With https:// and no slash at the end. Used for Google, the sitemap and link previews on WhatsApp.', 'https://domiastays.es') + '<label><span>Home page style</span><select data-s="heroStyle"><option value="window"' + (s.heroStyle !== 'cinematic' ? ' selected' : '') + '>Signature: video inside the D-shaped window, beside the headline</option><option value="cinematic"' + (s.heroStyle === 'cinematic' ? ' selected' : '') + '>Cinematic: full-screen video behind the headline</option></select><span class="hint">Both use the same homes and text. Switch, save, and look at the home page.</span></label></fieldset>';
     h += '<fieldset class="card stack"><legend>Contact details</legend><div class="g3">' + f('Phone, as shown', 'phone', '', '+34 666 64 72 45') + f('WhatsApp number', 'whatsapp', 'Digits only, with the country code. For example 34666647245.') + f('Email', 'email') + '</div><div class="g3">' + f('Town', 'locality') + f('Postcode', 'postalCode') + f('Province', 'region') + '</div><div class="g2">' + f('Instagram link', 'instagram', 'Optional.', 'https://') + f('Facebook link', 'facebook', 'Optional.', 'https://') + '</div></fieldset>';
-    h += '<fieldset class="card stack"><legend>Company (legal notice and privacy policy)</legend><div class="g2">' + f('Name in the footer', 'legalName', 'Shown after the © at the bottom of every page.', 'Domia Stays Group S.L.') + f('Registered company name', 'registeredName', 'Exactly as on the tax card. Used on the legal notice and privacy policy.', 'Domia Stays S.L.') + '</div><div class="g2">' + f('Tax number (NIF)', 'taxId', '', 'B27687110') + f('Registered address', 'registeredAddress', 'As on the tax card, with the postcode and town.') + '</div>' + f('Commercial Registry details', 'registryDetails', 'Leave empty while the company is being incorporated: the pages then say \u201cin formation\u201d and mark the tax number as provisional. Once registered, write the details from the registry, for example: Registro Mercantil de Alicante, tomo 1234, folio 56, hoja A-123456.') + f('Booking website', 'bookingSite', 'Your separate booking site (Lodgify), named on the legal notice. Leave empty if there is none.', 'domiastays.com') + '</fieldset>';
+    h += '<fieldset class="card stack"><legend>Company (legal notice and privacy policy)</legend><div class="g2">' + f('Name in the footer', 'legalName', 'Shown after the © at the bottom of every page.', 'Domia Stays S.L.') + f('Registered company name', 'registeredName', 'Exactly as on the tax card. Used on the legal notice and privacy policy.', 'Domia Stays S.L.') + '</div><div class="g2">' + f('Tax number (NIF)', 'taxId', '', 'B27687110') + f('Registered address', 'registeredAddress', 'As on the tax card, with the postcode and town.') + '</div>' + f('Commercial Registry details', 'registryDetails', 'Leave empty while the company is being incorporated: the pages then say \u201cin formation\u201d and mark the tax number as provisional. Once registered, write the details from the registry, for example: Registro Mercantil de Alicante, tomo 1234, folio 56, hoja A-123456.') + f('Booking website', 'bookingSite', 'Your separate booking site (Lodgify), named on the legal notice. Leave empty if there is none.', 'domiastays.com') + '<p class="small muted">The rest of the wording of the legal notice and privacy policy is in the <b>Texts</b> tab.</p></fieldset>';
     h += '<fieldset class="card stack"><legend>Check-in and check-out</legend><div class="g3">' + f('Check-in from', 'checkInFrom', '', '17:00') + f('Check-in until', 'checkInUntil', '', '20:00') + f('Check-out by', 'checkOutBy', '', '10:00') + '</div><p class="small muted">These times appear on every home, on the home page and in the guest FAQ.</p></fieldset></div>';
     view.innerHTML = h;
   }
 
+  /* ---------------- site text (Texts tab) ---------------- */
+  // Every sentence of the site is written in build/copy.js. Changes made here are saved in
+  // content/texts.json and laid over it when the pages are built (DomiaLib.applyTexts).
+  var COPY0 = window.DomiaCopy;
+  var TEXT_GROUPS = [
+    ['home', 'Home page', ['home']],
+    ['homes', 'Homes list', ['homes']],
+    ['homePage', 'Each home’s page', ['homePage', 'facts', 'price']],
+    ['owners', 'For owners', ['owners']],
+    ['calc', 'Earnings calculator', ['calc']],
+    ['benidorm', 'Benidorm', ['benidorm']],
+    ['about', 'About', ['about']],
+    ['guest', 'Guest information and FAQ', ['guest']],
+    ['contact', 'Contact', ['contact']],
+    ['legal', 'Legal notice', ['legal']],
+    ['privacy', 'Privacy policy', ['privacy']],
+    ['common', 'Menu, footer and buttons', ['nav', 'footer', 'cta', 'reviews', 'skip']],
+    ['wa', 'WhatsApp messages', ['wa']],
+    ['notFound', 'Page not found', ['notFound']]
+  ];
+  (function () { // text added to copy.js later, under a new name, still shows up
+    var named = {}; TEXT_GROUPS.forEach(function (g) { g[2].forEach(function (k) { named[k] = true; }); });
+    var rest = Object.keys(COPY0.en).filter(function (k) { return !named[k]; });
+    if (rest.length) TEXT_GROUPS.push(['other', 'Other', rest]);
+  })();
+  var TEXT_NAMES = {
+    title: 'Title in Google and on the browser tab', desc: 'Description in Google', h1: 'Main heading', lead: 'Intro under the heading',
+    eyebrow: 'Small line above the heading', crumb: 'Link back to the section', endTitle: 'Closing heading', cardTitle: 'Box heading',
+    nav: 'Menu', footer: 'Footer', cta: 'Closing box', reviews: 'Reviews', skip: 'Keyboard shortcut link', facts: 'Home facts', price: 'Price',
+    homePage: 'Page', faq: 'Questions', sections: 'Section', f: 'Labels', wa: 'Message', msg: 'Message'
+  };
+  function words(k) { return TEXT_NAMES[k] || k.replace(/([a-z])([A-Z0-9])/g, '$1 $2').toLowerCase().replace(/^./, function (c) { return c.toUpperCase(); }); }
+  function textLabel(path, single) {
+    var parts = path.split('.'), node = COPY0.en, up = null, out = [];
+    parts.forEach(function (p, i) {
+      var parent = node; node = parent[p];
+      if (i === 0) { if (!single) out.push(words(p)); up = parent; return; }
+      if (/^\d+$/.test(p) && Array.isArray(parent)) {
+        if (Array.isArray(up) && parent.length === 2 && typeof parent[0] === 'string') out.push(parts[i - 2] === 'faq' ? (p === '0' ? 'question' : 'answer') : (p === '0' ? 'heading' : 'text'));
+        else out.push('#' + (+p + 1));
+      } else out.push(words(p));
+      up = parent;
+    });
+    return out.join(' › ') || 'Text';
+  }
+  function textPaths(keys) {
+    var list = [];
+    (function walk(o, path) {
+      if (typeof o === 'string') { if (!L.TEXT_LOCKED.test(path)) list.push(path); return; }
+      if (o && typeof o === 'object') Object.keys(o).forEach(function (k) { walk(o[k], path ? path + '.' + k : k); });
+    })(keys.reduce(function (o, k) { o[k] = COPY0.en[k]; return o; }, {}), '');
+    return list;
+  }
+  function textNow(lang, path) { var v = state.texts[lang][path]; return v != null && String(v).trim() ? v : getPath(COPY0[lang], path); }
+  function changed(path) { return state.texts.en[path] != null || state.texts.es[path] != null; }
+  function tokensMissing(lang, path) {
+    var need = String(getPath(COPY0[lang], path)).match(/\{\w+\}/g) || [], now = textNow(lang, path);
+    return need.filter(function (t) { return now.indexOf(t) < 0; });
+  }
+  function fold(x) { return String(x).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
+  function sortKeys(o) { var r = {}; Object.keys(o).sort().forEach(function (k) { r[k] = o[k]; }); return r; }
+  function textField(path, groupName, single) {
+    var miss = tokensMissing('en', path).concat(tokensMissing('es', path));
+    var h = '<div class="tx' + (changed(path) ? ' tx--changed' : '') + '" data-tx="' + e(path) + '"><div class="tx__top"><span class="tx__label">' + (groupName ? e(groupName) + ' › ' : '') + e(textLabel(path, single)) + '</span>';
+    h += '<button type="button" class="tx__undo" data-act="t-reset" data-path="' + e(path) + '"' + (changed(path) ? '' : ' hidden') + '>Back to the original text</button></div><div class="g2">';
+    ['en', 'es'].forEach(function (lang) {
+      var v = textNow(lang, path);
+      h += '<label><span>' + (lang === 'en' ? 'English' : 'Español') + '</span><textarea data-t="' + lang + '" data-path="' + e(path) + '" rows="' + Math.min(12, Math.max(1, Math.ceil(v.length / 58))) + '">' + e(v) + '</textarea></label>';
+    });
+    h += '</div><p class="tx__warn"' + (miss.length ? '' : ' hidden') + '>Keep ' + e(miss.join(' and ')) + ' in the text: it is filled in automatically.</p></div>';
+    return h;
+  }
+  function renderTexts() {
+    var h = '<div class="stack"><div><h1>Texts</h1><p class="lead">Every sentence on the website, in English and Spanish, including the legal notice and the privacy policy. Change the words, click <b>Save changes</b>, then publish.</p></div>';
+    h += '<div class="texts"><nav class="texts__nav" aria-label="Pages">' + TEXT_GROUPS.map(function (g) {
+      var n = textPaths(g[2]).filter(changed).length;
+      return '<button type="button" data-act="t-group" data-g="' + g[0] + '" aria-current="' + (state.textGroup === g[0] && !state.textFind) + '"><span>' + e(g[1]) + '</span>' + (n ? '<b title="changed">' + n + '</b>' : '') + '</button>';
+    }).join('') + '</nav><div class="stack">';
+    h += '<label class="texts__find"><span>Find a sentence anywhere on the site</span><input type="text" data-tfind placeholder="Type a few words you see on the website" value="' + e(state.textFind) + '"></label>';
+    h += '<p class="small muted">Words in {curly brackets} are filled in automatically, such as times, names and prices: keep them. Empty a box to go back to the original text. Homes, photos, prices, phone, email and company details are changed in their own tabs.</p>';
+    h += '<div class="tx-list" id="tx-list"></div></div></div></div>';
+    view.innerHTML = h;
+    renderTextList();
+  }
+  function renderTextList() {
+    var box = $('#tx-list'); if (!box) return;
+    var q = fold(state.textFind.trim()), h = '';
+    if (q.length >= 2) {
+      var hits = [];
+      TEXT_GROUPS.forEach(function (g) { textPaths(g[2]).forEach(function (p) { if (fold(textNow('en', p)).indexOf(q) >= 0 || fold(textNow('es', p)).indexOf(q) >= 0) hits.push([p, g]); }); });
+      h = '<p class="small muted">' + (hits.length ? hits.length + (hits.length === 1 ? ' sentence contains' : ' sentences contain') + ' “' + e(state.textFind.trim()) + '”.' : 'No sentence contains “' + e(state.textFind.trim()) + '”. Try fewer words.') + '</p>';
+      h += hits.slice(0, 80).map(function (x) { return textField(x[0], x[1][1], x[1][2].length === 1); }).join('');
+    } else {
+      var g = TEXT_GROUPS.filter(function (x) { return x[0] === state.textGroup; })[0] || TEXT_GROUPS[0];
+      h = '<h2>' + e(g[1]) + '</h2>' + textPaths(g[2]).map(function (p) { return textField(p, '', g[2].length === 1); }).join('');
+    }
+    box.innerHTML = h;
+    $$('textarea', box).forEach(fitText);
+  }
+  // each box grows to show its whole text
+  function fitText(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight + 2) + 'px'; }
+  function onTextInput(el) {
+    fitText(el);
+    var lang = el.dataset.t, path = el.dataset.path, orig = getPath(COPY0[lang], path), v = el.value;
+    if (!v.trim() || v === orig) delete state.texts[lang][path]; else state.texts[lang][path] = v;
+    var box = el.closest('.tx'), miss = tokensMissing('en', path).concat(tokensMissing('es', path)), warn = box.querySelector('.tx__warn');
+    box.classList.toggle('tx--changed', changed(path));
+    box.querySelector('.tx__undo').hidden = !changed(path);
+    warn.hidden = !miss.length; warn.textContent = 'Keep ' + miss.join(' and ') + ' in the text: it is filled in automatically.';
+    markDirty();
+  }
+
   function renderHelp() {
     var h = '<div class="help stack"><div><h1>Help and publishing</h1><p class="lead">This manager changes the website files on your computer. Publishing sends those files to GitHub, which puts them online.</p></div>';
+    h += '<div class="card"><h2 style="margin-top:0">Where to change what</h2><ul><li><b>Homes</b>: add, edit, hide or delete a home, with its photos, price, description and licence number.</li><li><b>Texts</b>: every sentence on the site in English and Spanish: home page, owners page, FAQ, legal notice, privacy policy, footer, WhatsApp messages. Use <b>Find a sentence</b> to jump to any line you see on the website.</li><li><b>Reviews</b>: real guest reviews.</li><li><b>Settings</b>: phone, WhatsApp, email, check-in times, company details for the legal pages (name, tax number, address, registry), and the home page style.</li></ul></div>';
     h += '<div class="card card--gold"><h2 style="margin-top:0">Publish your changes</h2><ol><li>Save here first.</li><li>Open <b>GitHub Desktop</b>. The changed files are listed on the left.</li><li>Type a short note at the bottom left, for example "Add Casa Azul".</li><li>Click <b>Commit to main</b>, then <b>Push origin</b> at the top.</li><li>Wait about a minute, then refresh the website.</li></ol><p class="small muted">Changed your mind before publishing? In GitHub Desktop, right-click the files and choose "Discard changes".</p></div>';
     h += '<h2>Add a home</h2><ol><li>Homes, then <b>Add a home</b>.</li><li>Fill in the name, area, price and how many guests it sleeps.</li><li>Drop in the photos and put the best one first.</li><li>Write the summary and description. Add the licence number.</li><li><b>Save this home</b>, then publish.</li></ol>';
     h += '<h2>Change a price, a photo or a description</h2><p>Homes, then <b>Edit</b> on the home, change it, <b>Save this home</b>, publish.</p>';
     h += '<h2>Take a home off the website</h2><ul><li><b>Hide</b> keeps everything but removes the home from the site. Use it for homes that are paused.</li><li><b>Delete</b> removes the home and its photos for good.</li></ul>';
     h += '<h2>Good photos</h2><ul><li>Landscape and portrait both work. The site crops the previews and shows the whole photo when a guest opens it.</li><li>Use the originals from the camera or photographer. The manager makes the web sizes.</li><li>iPhone photos in HEIC format need exporting as JPG first (in Photos: File, Export, JPEG).</li></ul>';
-    h += '<h2>If something looks wrong</h2><ul><li>Nothing is online until you publish, so you can always discard changes in GitHub Desktop.</li><li>Every published version is kept on GitHub. An older version can be restored.</li><li>Text that is not part of a listing (home page, owners page, FAQ) lives in the file <code>build/copy.js</code>.</li></ul></div>';
+    h += '<h2>If something looks wrong</h2><ul><li>Nothing is online until you publish, so you can always discard changes in GitHub Desktop.</li><li>Every published version is kept on GitHub. An older version can be restored.</li><li>Changed some wording and want the original back? In <b>Texts</b>, click <b>Back to the original text</b> on that sentence.</li></ul></div>';
     view.innerHTML = h;
   }
 
@@ -572,6 +707,8 @@ code{padding:1px 6px;border-radius:6px;background:rgba(15,39,64,.08);font-size:.
       else if (act === 'ph-del') { state.draft.photos.splice(i, 1); markDirty(); renderPhotos(); }
       else if (act === 'ph-cover') { state.draft.photos.unshift(state.draft.photos.splice(i, 1)[0]); markDirty(); renderPhotos(); }
       else if (act === 'ph-left' || act === 'ph-right') { var k = act === 'ph-left' ? i - 1 : i + 1; var p = state.draft.photos[i]; state.draft.photos[i] = state.draft.photos[k]; state.draft.photos[k] = p; markDirty(); renderPhotos(); }
+      else if (act === 't-group') { state.textGroup = b.dataset.g; state.textFind = ''; renderTexts(); window.scrollTo(0, 0); }
+      else if (act === 't-reset') { var tp = b.dataset.path; delete state.texts.en[tp]; delete state.texts.es[tp]; markDirty(); renderTexts(); }
       else if (act === 'rev-new') { state.reviews.push({ author: '', origin: '', source: '', date: '', rating: 5, home: '', text: { en: '', es: '' } }); markDirty(); render(); }
       else if (act === 'rev-del') { state.reviews.splice(i, 1); markDirty(); render(); }
     } catch (x) {
@@ -594,6 +731,8 @@ code{padding:1px 6px;border-radius:6px;background:rgba(15,39,64,.08);font-size:.
     } else if (el.dataset.s) { state.site[el.dataset.s] = el.value.trim(); markDirty(); }
     else if (el.dataset.r) { var box = el.closest('[data-rev]'); var r = state.reviews[+box.dataset.rev]; setPath(r, el.dataset.r, el.dataset.r === 'rating' ? Number(el.value) : el.value); markDirty(); }
     else if (el.id === 'extra-en' || el.id === 'extra-es') markDirty();
+    else if (el.dataset.t) onTextInput(el);
+    else if (el.hasAttribute('data-tfind')) { state.textFind = el.value; renderTextList(); }
   });
   document.addEventListener('change', function (ev) { if (ev.target.id === 'pick-photos') { addPhotos(ev.target.files); ev.target.value = ''; } });
   document.addEventListener('dragover', function (ev) { var d = $('#drop'); if (d) { ev.preventDefault(); d.classList.add('is-over'); } });

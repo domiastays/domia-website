@@ -1,7 +1,8 @@
 /*
- * Domia Stays website generator: turns the three content files into every page of the site.
+ * Domia Stays website generator: turns the content files into every page of the site.
+ * `texts` (content/texts.json, optional) holds wording changed in the manager's Texts tab.
  *
- *   DomiaBuild.generate({ site, properties, reviews })
+ *   DomiaBuild.generate({ site, properties, reviews, texts })
  *     -> { files: { 'index.html': '<!doctype html>…', … }, notes: [ … ], homes: [ … ] }
  *
  * The Property Manager (admin/index.html) calls this in the browser and writes the files into
@@ -9,13 +10,14 @@
  */
 (function (g) {
   'use strict';
-  var L = g.DomiaLib, T = g.DomiaTemplates, COPY = g.DomiaCopy;
+  var L = g.DomiaLib, T = g.DomiaTemplates;
 
   // Generated property pages match this; anything matching that is no longer in `files` is stale.
   var HOME_PAGE_PATTERN = /^properties_[a-z0-9-]+(\.[a-z]{2})?\.html$/;
 
   function generate(data) {
     var site = data.site || {};
+    var COPY = L.applyTexts(g.DomiaCopy, data.texts);
     var notes = [];
     var seen = {};
     var all = ((data.properties && data.properties.properties) || data.properties || []).map(L.cleanHome).filter(function (h) {
