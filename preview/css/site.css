@@ -165,6 +165,15 @@ label > span{display:block;margin-bottom:5px;font-size:.82rem;font-weight:500;co
 .hero__media{position:absolute;inset:0}
 .hero__media img,.hero__media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:40% 50%}
 .hero__media video{opacity:0;transition:opacity .9s ease}
+/* pause / play on the home page video */
+.vctl{position:absolute;top:14px;left:14px;z-index:3;display:none;place-items:center;width:36px;height:36px;padding:0;border:1px solid rgba(225,209,185,.45);border-radius:50%;background:rgba(10,28,47,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:var(--gold-light);cursor:pointer}
+.js .vctl{display:grid}
+.vctl:hover{background:rgba(10,28,47,.78)}
+.vctl:focus-visible{outline:2px solid var(--gold-light);outline-offset:3px}
+.vctl svg{width:13px;height:13px}
+.vctl .i-play,.vctl.is-paused .i-pause{display:none}
+.vctl.is-paused .i-play{display:block}
+.cine__stage .vctl{top:auto;left:auto;right:var(--gutter);bottom:28px}
 .hero__media video.is-on{opacity:1}
 /* the fine gold line runs round the whole D, drawn from the middle of the straight side and back to it */
 .hero__ring{position:absolute;inset:-12px;border:1px solid rgba(225,209,185,.62);border-radius:0 999px 999px 0;pointer-events:none;-webkit-mask-image:conic-gradient(from 270deg at 50% 50%,#000 var(--ring,360deg),transparent 0);mask-image:conic-gradient(from 270deg at 50% 50%,#000 var(--ring,360deg),transparent 0)}
@@ -619,7 +628,26 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:3px solid var(
 @media (min-width:560px){.form__two{grid-template-columns:1fr 1fr}}
 @media (min-width:900px){.contact{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(40px,7vw,104px);align-items:start}}
 
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* Reduce Motion (a phone setting many people have on): nothing slides, zooms, spins or scrolls by itself.
+   The gentle things stay: the video (it can be paused), fades, the gold shimmer on the headline
+   and the gold line drawing round the D. */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition-property:opacity,color,background-color,border-color,box-shadow,fill!important}
+  .hero__ring{animation:rm-ring 2.6s cubic-bezier(.65,0,.2,1) .6s both}
+  .hero__gem{animation:rm-fade .8s ease 1.45s both}
+  .hero__gem--b{animation-delay:2.4s}
+  .seal{animation:rm-fade 1s ease 1.7s both}
+  .shim{animation:rm-shine 5.6s ease-in-out 1.7s infinite alternate}
+  .ln--2 .shim{animation-delay:2.2s}
+  .eyebrow,.hero__copy .lead,.hero__copy .btns,.cine__in .lead,.cine__in .btns{animation:rm-fade .9s ease .1s both}
+  .hero__copy .lead,.cine__in .lead{animation-delay:.5s}
+  .hero__copy .btns,.cine__in .btns{animation-delay:.7s}
+  .js .rv{opacity:0;transition:opacity .9s ease var(--rv-d,0s)}
+  .js .rv.is-in{opacity:1}
+  @keyframes rm-fade{from{opacity:0}}
+  @keyframes rm-ring{from{--ring:0deg}to{--ring:360deg}}
+  @keyframes rm-shine{0%,12%{background-position:100% 0}88%,100%{background-position:0 0}}
+}
 @media print{.hdr,.ftr,.bar,.fab,.finder,.filters,.btns{display:none!important}body{background:#fff}}
 
 /* WhatsApp button fades in after scrolling (only when scripts run) */

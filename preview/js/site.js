@@ -40,16 +40,31 @@
     addEventListener('resize', throttle(function () { if (innerWidth >= 1040 && !menu.hidden) setMenu(false); }));
   }
 
-  /* ----- hero video: starts after the page has loaded, never on data-saver or reduced motion ----- */
-  var video = $('[data-hero-video]');
-  if (video && !reduceMotion && !(navigator.connection && navigator.connection.saveData)) {
-    var startVideo = function () {
-      video.src = innerWidth < 700 ? video.dataset.srcSm : video.dataset.src;
-      video.addEventListener('playing', function () { video.classList.add('is-on'); }, { once: true });
-      var p = video.play();
-      if (p && p.catch) p.catch(function () {});
+  /* ----- hero video: starts after the page has loaded. It also plays with Reduce Motion on (it is slow, and the
+     button pauses it). With data saver on, or where the phone blocks autoplay (iPhone Low Power Mode), the
+     button shows "play" and starts it with one tap. ----- */
+  var video = $('[data-hero-video]'), vctl = $('[data-video-toggle]');
+  if (video) {
+    var loaded = false;
+    var showPaused = function (paused) {
+      if (!vctl) return;
+      vctl.classList.toggle('is-paused', paused);
+      vctl.setAttribute('aria-label', paused ? vctl.dataset.labelPlay : vctl.dataset.labelPause);
     };
-    if (doc.readyState === 'complete') setTimeout(startVideo, 200);
+    var startVideo = function () {
+      if (!loaded) {
+        loaded = true;
+        video.src = innerWidth < 700 ? video.dataset.srcSm : video.dataset.src;
+        video.addEventListener('playing', function () { video.classList.add('is-on'); });
+      }
+      var p = video.play();
+      if (p && p.then) p.then(function () { showPaused(false); }, function () { showPaused(true); });
+    };
+    video.addEventListener('play', function () { showPaused(false); });
+    video.addEventListener('pause', function () { showPaused(true); });
+    if (vctl) vctl.addEventListener('click', function () { if (!loaded || video.paused) startVideo(); else video.pause(); });
+    if (navigator.connection && navigator.connection.saveData) showPaused(true);
+    else if (doc.readyState === 'complete') setTimeout(startVideo, 200);
     else addEventListener('load', function () { setTimeout(startVideo, 200); });
   }
 
@@ -66,8 +81,8 @@
     tiltBox.addEventListener('pointerleave', function () { tx = ty = 0; setTilt(); });
   }
 
-  /* ----- things ease in as they come on screen ----- */
-  if ('IntersectionObserver' in window && !reduceMotion) {
+  /* ----- things ease in as they come on screen (with Reduce Motion they only fade, see site.css) ----- */
+  if ('IntersectionObserver' in window) {
     var revealSel = '.sechead, .find, .split__head, .split__body > *, .cards .card, .deflist > div, .stats > div, .dfig, .owners-teaser__in > div, .ohero__in > div, .closing__in > *, .intro__media, .intro__text > *, .band__in > *, .ghero__in > *, .phead .wrap > *, .area, .pics li, .cmp__col, .svc__group, .story > *, .ways li, .form, .review, .filters, .calc__panel, .hgrid__main > *, .earn__up, .chips li, .faq details';
     var revealIo = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
