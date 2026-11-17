@@ -4,6 +4,8 @@ The website of Domia Stays (Domia Stays S.L.): holiday homes in Benidorm, in Eng
 
 It is a plain static site. No server, no database, no monthly platform. GitHub Pages serves the files in this folder as they are.
 
+**Team preview.** Until the new design goes live, a copy of it is at https://domiastays.github.io/domia-website/preview/ for the team to look at. Search engines are told to ignore it. It does not update by itself: ask for a refresh after changes.
+
 **Two websites, two addresses.** This folder is **domiastays.es**: the brand site with the homes, the owners pages and the company's legal pages. **domiastays.com** is a separate booking website built in Lodgify; it is not in this folder and nothing here changes it. The legal notice names it as the booking website (manager, Settings, *Booking website*), and a home's *Book online* link can point to its page there.
 
 ## The short version
